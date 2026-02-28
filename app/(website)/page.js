@@ -1,5 +1,4 @@
-﻿// F:\amit-hardware\app\(website)\page.js
-export default function HomePage() {
+﻿export default function HomePage() {
   return (
     <div>
       <section className="bg-[#0f2d5e] text-white py-16 px-6 text-center">
@@ -9,17 +8,25 @@ export default function HomePage() {
           संपर्क करें
         </a>
       </section>
-
       <section className="max-w-6xl mx-auto px-6 py-16">
         <h2 className="text-2xl font-bold text-[#0f2d5e] text-center mb-10">हमारे उत्पाद</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
           {[
-            ["🚿", "सेनेटरी"],
-            ["🔧", "नल एवं फिटिंग"],
-            ["🪠", "PVC पाइप"],
-            ["🎨", "पेन्ट्स"],
-            ["🔩", "हार्डवेयर"],
+            ["🚿", "सेनेटरी वेयर"],
+            ["🚰", "नल एवं बाथरूम फिटिंग"],
+            ["🪠", "पाइप एवं पाइप फिटिंग"],
+            ["🎨", "पेन्ट्स एवं वॉटरप्रूफिंग"],
+            ["⚡", "इलेक्ट्रिकल"],
+            ["🔨", "हैंड टूल्स"],
+            ["🔌", "पावर टूल्स"],
+            ["🚪", "दरवाजे एवं खिड़की"],
+            ["🔐", "ताले एवं दरवाजा हार्डवेयर"],
+            ["🔩", "फास्टनर्स"],
+            ["⚙️", "मशीनरी एवं पंप"],
+            ["🪟", "टाइल्स एवं फ्लोरिंग"],
             ["📦", "बिल्डिंग मटेरियल"],
+            ["🪨", "एल्युमीनियम एवं शीट"],
+            ["➕", "अन्य"],
           ].map(([icon, label]) => (
             <div key={label} className="bg-white rounded-xl border border-gray-200 p-5 text-center shadow-sm hover:shadow-md transition-shadow">
               <div className="text-3xl mb-3">{icon}</div>
@@ -28,7 +35,6 @@ export default function HomePage() {
           ))}
         </div>
       </section>
-
       <section className="bg-white py-12 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl font-bold text-[#0f2d5e] mb-8">हमसे क्यों खरीदें?</h2>
