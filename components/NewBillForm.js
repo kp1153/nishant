@@ -27,13 +27,6 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
     matra: "1",
     gstDar: "18",
   });
-  const [manual, setManual] = useState(false);
-  const [manualItem, setManualItem] = useState({
-    naam: "",
-    mulya: "",
-    matra: "1",
-    gstDar: "18",
-  });
   const [aansikRakam, setAansikRakam] = useState("");
 
   const udharWala = payment === "उधार" || payment === "आंशिक";
