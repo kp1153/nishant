@@ -20,6 +20,20 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
   const [searchGrahak, setSearchGrahak] = useState("");
   const [searchSamaan, setSearchSamaan] = useState("");
   const [saving, setSaving] = useState(false);
+  const [manual, setManual] = useState(false);
+  const [manualItem, setManualItem] = useState({
+    naam: "",
+    mulya: "",
+    matra: "1",
+    gstDar: "18",
+  });
+  const [manual, setManual] = useState(false);
+  const [manualItem, setManualItem] = useState({
+    naam: "",
+    mulya: "",
+    matra: "1",
+    gstDar: "18",
+  });
   const [aansikRakam, setAansikRakam] = useState("");
 
   const udharWala = payment === "उधार" || payment === "आंशिक";
@@ -62,6 +76,24 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
 
   function removeItem(id) {
     setItems(items.filter((i) => i.id !== id));
+  }
+  function addManualItem() {
+    if (!manualItem.naam || !manualItem.mulya) return;
+    const id = `manual-${Date.now()}`;
+    setItems([
+      ...items,
+      {
+        id,
+        naam: manualItem.naam,
+        bikriMulya: parseFloat(manualItem.mulya),
+        quantity: parseInt(manualItem.matra) || 1,
+        gstDar: parseFloat(manualItem.gstDar) || 18,
+        hsnCode: null,
+        isManual: true,
+      },
+    ]);
+    setManualItem({ naam: "", mulya: "", matra: "1", gstDar: "18" });
+    setManual(false);
   }
 
   const filteredGrahak = grahakSuchi?.filter(
@@ -113,7 +145,8 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
             i.gstDar ?? 18,
           );
           return {
-            id: i.id,
+            id: i.isManual ? null : i.id,
+            naam: i.naam,
             matra: i.quantity,
             mulya: i.bikriMulya,
             gstDar: i.gstDar ?? 18,
