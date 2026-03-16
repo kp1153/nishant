@@ -26,7 +26,7 @@ export async function POST(req) {
   for (const item of items) {
     await db.insert(billItem).values({
       billId: newBill.id,
-      samaanId: item.id,
+      samaanId: item.id ?? null,
       matra: item.matra,
       mulya: item.mulya,
       gstDar: item.gstDar ?? 18,
@@ -35,9 +35,11 @@ export async function POST(req) {
       kul: item.kul,
     })
 
-    await db.update(samaan)
-      .set({ matra: sql`${samaan.matra} - ${item.matra}` })
-      .where(eq(samaan.id, item.id))
+    if (item.id) {
+      await db.update(samaan)
+        .set({ matra: sql`${samaan.matra} - ${item.matra}` })
+        .where(eq(samaan.id, item.id))
+    }
   }
 
   if (bhugtan === "उधार") {
