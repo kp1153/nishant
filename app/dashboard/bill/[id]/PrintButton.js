@@ -93,11 +93,11 @@ export default function PrintButton({ bill, grahak, items, dukaan }) {
   return (
     <div className="flex gap-2 flex-wrap">
       <button onClick={handlePrint}
-        className="bg-[#0f2d5e] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#1a3f7a]">
+        className="bg-slate-500 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-600">
         🖨️ प्रिंट करें
       </button>
       <button onClick={downloadPDF}
-        className="bg-green-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-green-700">
+        className="bg-emerald-500 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-emerald-600">
         📄 PDF डाउनलोड
       </button>
       <button onClick={whatsappBhejo}
