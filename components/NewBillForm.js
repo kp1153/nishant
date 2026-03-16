@@ -259,34 +259,43 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                 }
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-400 text-gray-800"
               />
-              <div className="flex gap-2">
-                <input
-                  type="number"
-                  placeholder="मूल्य ₹"
-                  value={manualItem.mulya}
-                  onChange={(e) =>
-                    setManualItem({ ...manualItem, mulya: e.target.value })
-                  }
-                  className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-400 text-gray-800"
-                />
-                <input
-                  type="number"
-                  placeholder="मात्रा"
-                  value={manualItem.matra}
-                  onChange={(e) =>
-                    setManualItem({ ...manualItem, matra: e.target.value })
-                  }
-                  className="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-400 text-gray-800"
-                />
-                <input
-                  type="number"
-                  placeholder="GST%"
-                  value={manualItem.gstDar}
-                  onChange={(e) =>
-                    setManualItem({ ...manualItem, gstDar: e.target.value })
-                  }
-                  className="w-20 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-400 text-gray-800"
-                />
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <div className="text-xs text-gray-400 mb-1">मूल्य ₹</div>
+                  <input
+                    type="number"
+                    placeholder="जैसे: 500"
+                    value={manualItem.mulya}
+                    onChange={(e) =>
+                      setManualItem({ ...manualItem, mulya: e.target.value })
+                    }
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-400 text-gray-800"
+                  />
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400 mb-1">मात्रा</div>
+                  <input
+                    type="number"
+                    placeholder="जैसे: 2"
+                    value={manualItem.matra}
+                    onChange={(e) =>
+                      setManualItem({ ...manualItem, matra: e.target.value })
+                    }
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-400 text-gray-800"
+                  />
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400 mb-1">GST %</div>
+                  <input
+                    type="number"
+                    placeholder="जैसे: 18"
+                    value={manualItem.gstDar}
+                    onChange={(e) =>
+                      setManualItem({ ...manualItem, gstDar: e.target.value })
+                    }
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-400 text-gray-800"
+                  />
+                </div>
               </div>
               <button
                 onClick={addManualItem}
