@@ -139,7 +139,10 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
   return (
     <div className="flex flex-col lg:flex-row gap-4">
       <div className="flex-1 space-y-8">
-        <div className="bg-white rounded-xl border border-gray-200 p-4 relative z-20">
+        <div
+          className="bg-white rounded-xl border border-gray-200 p-4 relative"
+          style={{ zIndex: 100 }}
+        >
           <div className="flex items-center justify-between mb-3">
             <div className="font-bold text-gray-700">👤 ग्राहक</div>
             <span className="text-xs text-gray-400">
@@ -172,7 +175,10 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                 onChange={(e) => setSearchGrahak(e.target.value)}
               />
               {searchGrahak && (
-                <div className="absolute z-50 w-full bg-white border border-gray-200 rounded-lg mt-1 shadow-lg max-h-60 overflow-y-auto">
+                <div
+                  className="absolute w-full bg-white border border-gray-200 rounded-lg mt-1 shadow-xl max-h-60 overflow-y-auto"
+                  style={{ top: "100%", left: 0, zIndex: 200 }}
+                >
                   {filteredGrahak?.map((g) => (
                     <div
                       key={g.id}
