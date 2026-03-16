@@ -1,6 +1,16 @@
 ﻿import { sql } from "drizzle-orm"
 import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core"
 
+export const dukaan = sqliteTable("dukaan", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  naam: text("naam").notNull().default("मेरी दुकान"),
+  pata: text("pata").default(""),
+  shahar: text("shahar").default(""),
+  mobile: text("mobile").default(""),
+  gstin: text("gstin").default(""),
+  tagline: text("tagline").default(""),
+})
+
 export const grahak = sqliteTable("grahak", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   naam: text("naam").notNull(),

@@ -1,5 +1,4 @@
-﻿// F:\amit-hardware\components\NewBillForm.js
-"use client"
+﻿"use client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
@@ -21,6 +20,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
   const [searchGrahak, setSearchGrahak] = useState("")
   const [searchSamaan, setSearchSamaan] = useState("")
   const [saving, setSaving] = useState(false)
+  const [aansikRakam, setAansikRakam] = useState("")
 
   const udharWala = payment === "उधार" || payment === "आंशिक"
 
@@ -77,7 +77,11 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
 
   async function saveBill() {
     if (items.length === 0) return
-    if (udharWala && !selectedGrahak) return alert("उधार के लिए ग्राहक जरूरी है")
+    if (udharWala && !selectedGrahak?.id) return alert("उधार के लिए ग्राहक जरूरी है")
+    if (payment === "आंशिक") {
+      const rakam = parseFloat(aansikRakam)
+      if (!rakam || rakam <= 0 || rakam >= summary.kul) return alert("आंशिक रकम सही नहीं है")
+    }
     setSaving(true)
     const res = await fetch("/api/bill", {
       method: "POST",
@@ -93,6 +97,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
         kul: parseFloat(summary.kul.toFixed(2)),
         gstRakam: parseFloat((summary.cgst + summary.sgst).toFixed(2)),
         mulyaBeforeGst: parseFloat(summary.base.toFixed(2)),
+        aansikRakam: payment === "आंशिक" ? parseFloat(aansikRakam) : 0,
       }),
     })
     setSaving(false)
@@ -291,6 +296,26 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
               ))}
             </div>
           </div>
+
+          {payment === "आंशिक" && (
+            <div>
+              <div className="text-sm text-gray-500 mb-1">अभी दी गई रकम</div>
+              <input
+                type="number"
+                min={1}
+                max={summary.kul - 1}
+                value={aansikRakam}
+                onChange={(e) => setAansikRakam(e.target.value)}
+                placeholder={`कुल ₹${summary.kul.toFixed(2)} से कम`}
+                className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#0f2d5e]"
+              />
+              {aansikRakam && (
+                <div className="text-xs text-orange-600 mt-1">
+                  बाकी उधार: ₹{(summary.kul - parseFloat(aansikRakam || 0)).toFixed(2)}
+                </div>
+              )}
+            </div>
+          )}
 
           <button onClick={saveBill}
             disabled={items.length === 0 || saving}
