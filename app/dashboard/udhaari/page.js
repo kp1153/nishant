@@ -1,5 +1,5 @@
 ﻿import { db } from "@/db"
-import { udhaari, grahak } from "@/db/schema"
+import { udhaari, grahak, dukaan } from "@/db/schema"
 import { eq, sql } from "drizzle-orm"
 import UdhaariChukao from "./UdhaariChukao"
 
@@ -9,6 +9,8 @@ export default async function UdhaariPage() {
     .from(udhaari)
     .leftJoin(grahak, eq(udhaari.grahakId, grahak.id))
     .where(sql`${udhaari.rakam} > ${udhaari.chukaya}`)
+
+  const [dukaanInfo] = await db.select().from(dukaan).limit(1)
 
   const kul = baaki.reduce((acc, r) => acc + r.udhaari.rakam - r.udhaari.chukaya, 0)
 
@@ -46,7 +48,13 @@ export default async function UdhaariPage() {
               <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-3">
                 <div className="h-1.5 rounded-full bg-green-500" style={{ width: `${pct}%` }} />
               </div>
-              <UdhaariChukao id={row.udhaari.id} baki={baki} />
+              <UdhaariChukao
+                id={row.udhaari.id}
+                baki={baki}
+                grahakNaam={row.grahak?.naam}
+                grahakMobile={row.grahak?.mobile}
+                dukaanNaam={dukaanInfo?.naam}
+              />
             </div>
           )
         })}
@@ -62,7 +70,7 @@ export default async function UdhaariPage() {
               <th className="px-5 py-3 text-right">चुकाया</th>
               <th className="px-5 py-3 text-right">बाकी</th>
               <th className="px-5 py-3 text-left">प्रगति</th>
-              <th className="px-5 py-3 text-center">भुगतान</th>
+              <th className="px-5 py-3 text-center">कार्रवाई</th>
             </tr>
           </thead>
           <tbody>
@@ -84,7 +92,13 @@ export default async function UdhaariPage() {
                     </div>
                   </td>
                   <td className="px-5 py-3 text-center">
-                    <UdhaariChukao id={row.udhaari.id} baki={baki} />
+                    <UdhaariChukao
+                      id={row.udhaari.id}
+                      baki={baki}
+                      grahakNaam={row.grahak?.naam}
+                      grahakMobile={row.grahak?.mobile}
+                      dukaanNaam={dukaanInfo?.naam}
+                    />
                   </td>
                 </tr>
               )

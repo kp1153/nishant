@@ -29,7 +29,7 @@ export default async function PrintPage({ params }) {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="print:hidden flex gap-3 mb-4">
-        <PrintButton />
+        <PrintButton bill={b} grahak={g} items={items} dukaan={dukaanInfo ?? {}} />
         <a href="/dashboard/bill"
           className="bg-gray-100 text-gray-700 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-200">
           ← वापस

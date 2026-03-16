@@ -1,4 +1,3 @@
-﻿// F:\amit-hardware\components\Sidebar.js
 "use client"
 
 import Link from "next/link"
@@ -39,57 +38,55 @@ export default function Sidebar() {
   return (
     <>
       {/* DESKTOP SIDEBAR */}
-      <aside className="hidden md:flex w-64 h-screen bg-[#0f2d5e] flex-col fixed top-0 left-0">
-        <div className="p-4 border-b border-white/10">
-          <div className="text-white font-bold text-sm leading-snug">
-            हार्डवेयर मैनेजर
-          </div>
-          <div className="text-white/40 text-xs mt-1">प्रबंधन प्रणाली</div>
-          <div className="mt-3 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-amber-400 flex items-center justify-center text-[#0f2d5e] font-bold text-sm">H</div>
+      <aside className="hidden md:flex w-64 h-screen flex-col fixed top-0 left-0 bg-white border-r border-gray-200 shadow-sm">
+        <div className="p-5 border-b border-gray-200">
+          <div className="text-2xl font-extrabold text-[#0f2d5e] tracking-wide">निशांत</div>
+          <div className="text-gray-400 text-xs mt-1">हार्डवेयर प्रबंधन</div>
+          <div className="mt-4 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-[#0f2d5e] flex items-center justify-center text-white font-bold text-sm shadow">नि</div>
             <div>
-              <div className="text-white text-xs font-semibold">व्यवस्थापक</div>
-              <div className="text-white/40 text-[10px]">प्रोप्राइटर</div>
+              <div className="text-[#0f2d5e] text-xs font-semibold">व्यवस्थापक</div>
+              <div className="text-gray-400 text-[10px]">प्रोप्राइटर</div>
             </div>
           </div>
         </div>
-        <nav className="flex-1 py-2 overflow-y-auto">
+        <nav className="flex-1 py-3 overflow-y-auto">
           {menu.map((item) => (
             <Link key={item.path} href={item.path}
-              className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-all border-l-4
+              className={`flex items-center gap-3 px-5 py-2.5 text-sm font-medium transition-all rounded-lg mx-2 mb-0.5
                 ${pathname === item.path
-                  ? "bg-white/10 text-white border-amber-400"
-                  : "text-white/60 border-transparent hover:bg-white/5 hover:text-white"}`}>
+                  ? "bg-blue-50 text-[#0f2d5e]"
+                  : "text-gray-500 hover:bg-gray-50 hover:text-[#0f2d5e]"}`}>
               <span>{item.icon}</span>
               <span>{item.naam}</span>
             </Link>
           ))}
         </nav>
         <button onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-white/60 border-t border-white/10 hover:bg-white/5 hover:text-white transition-all flex-shrink-0">
+          className="w-full flex items-center gap-3 px-5 py-3 text-sm font-medium text-gray-400 border-t border-gray-200 hover:bg-gray-50 hover:text-[#0f2d5e] transition-all flex-shrink-0">
           <span>🚪</span><span>लॉगआउट</span>
         </button>
       </aside>
 
       {/* MOBILE TOP BAR */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-[#0f2d5e] flex items-center justify-between px-4 py-3 shadow-md">
-        <div className="text-white font-bold text-sm">हार्डवेयर मैनेजर</div>
-        <div className="text-white/40 text-xs">प्रबंधन प्रणाली</div>
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 flex items-center justify-between px-4 py-3 shadow-sm">
+        <div className="text-[#0f2d5e] font-extrabold text-lg tracking-wide">निशांत</div>
+        <div className="text-gray-400 text-xs">हार्डवेयर प्रबंधन</div>
       </div>
 
       {/* MOBILE BOTTOM NAV */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0f2d5e] border-t border-white/10 flex">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 flex">
         {bottomNav.map((item) =>
           item.path ? (
             <Link key={item.path} href={item.path}
               className={`flex-1 flex flex-col items-center justify-center py-2 text-[10px] font-medium transition-all
-                ${pathname === item.path ? "text-amber-400" : "text-white/50 hover:text-white"}`}>
+                ${pathname === item.path ? "text-[#0f2d5e]" : "text-gray-400 hover:text-[#0f2d5e]"}`}>
               <span className="text-xl mb-0.5">{item.icon}</span>
               {item.naam}
             </Link>
           ) : (
             <button key="meer" onClick={() => setDrawerOpen(true)}
-              className="flex-1 flex flex-col items-center justify-center py-2 text-[10px] font-medium text-white/50 hover:text-white transition-all">
+              className="flex-1 flex flex-col items-center justify-center py-2 text-[10px] font-medium text-gray-400 hover:text-[#0f2d5e] transition-all">
               <span className="text-xl mb-0.5">{item.icon}</span>
               {item.naam}
             </button>
@@ -101,10 +98,10 @@ export default function Sidebar() {
       {drawerOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex flex-col justify-end">
           <div className="absolute inset-0 bg-black/50" onClick={() => setDrawerOpen(false)} />
-          <div className="relative bg-[#0f2d5e] rounded-t-2xl p-4 pb-8">
+          <div className="relative bg-white rounded-t-2xl p-4 pb-8">
             <div className="flex items-center justify-between mb-4">
-              <div className="text-white font-semibold">सभी विकल्प</div>
-              <button onClick={() => setDrawerOpen(false)} className="text-white/50 text-xl">✕</button>
+              <div className="text-[#0f2d5e] font-semibold">सभी विकल्प</div>
+              <button onClick={() => setDrawerOpen(false)} className="text-gray-400 text-xl">✕</button>
             </div>
             <div className="grid grid-cols-3 gap-3">
               {menu.map((item) => (
@@ -112,15 +109,15 @@ export default function Sidebar() {
                   onClick={() => setDrawerOpen(false)}
                   className={`flex flex-col items-center gap-1 p-3 rounded-xl text-xs font-medium transition-all
                     ${pathname === item.path
-                      ? "bg-amber-400 text-[#0f2d5e]"
-                      : "bg-white/10 text-white/70 hover:bg-white/20"}`}>
+                      ? "bg-[#0f2d5e] text-white"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
                   <span className="text-2xl">{item.icon}</span>
                   {item.naam}
                 </Link>
               ))}
             </div>
             <button onClick={handleLogout}
-              className="mt-4 w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-red-500/20 text-red-400 text-sm font-medium hover:bg-red-500/30 transition-all">
+              className="mt-4 w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-red-50 text-red-500 text-sm font-medium hover:bg-red-100 transition-all">
               <span>🚪</span> लॉगआउट
             </button>
           </div>

@@ -1,10 +1,45 @@
 "use client"
-import { useRef } from "react"
+import html2canvas from "html2canvas"
+import jsPDF from "jspdf"
 
-export default function PrintButton() {
+export default function PrintButton({ bill, grahak, items, dukaan }) {
+
+  async function downloadPDF() {
+    const printArea = document.querySelector(".print-area")
+    if (!printArea) return
+
+    const canvas = await html2canvas(printArea, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+    })
+
+    const imgData = canvas.toDataURL("image/png")
+    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" })
+
+    const pageW = pdf.internal.pageSize.getWidth()
+    const pageH = pdf.internal.pageSize.getHeight()
+    const imgW = pageW - 20
+    const imgH = (canvas.height * imgW) / canvas.width
+
+    let y = 10
+    let remainH = imgH
+
+    while (remainH > 0) {
+      pdf.addImage(imgData, "PNG", 10, y, imgW, imgH)
+      remainH -= (pageH - 20)
+      if (remainH > 0) {
+        pdf.addPage()
+        y = -(imgH - remainH)
+      }
+    }
+
+    pdf.save(`${bill.billNumber}.pdf`)
+  }
+
   function handlePrint() {
     const printArea = document.querySelector(".print-area")
-    if (!printArea) { window.print(); return; }
+    if (!printArea) { window.print(); return }
     const w = window.open("", "_blank")
     w.document.write(`
       <html>
@@ -21,24 +56,54 @@ export default function PrintButton() {
             .text-right { text-align: right; }
             .text-center { text-align: center; }
             .font-bold { font-weight: 700; }
-            .text-blue { color: #0f2d5e; }
-            .text-orange { color: #ea580c; }
-            .text-gray { color: #6b7280; }
-            .border-top { border-top: 1px solid #e5e7eb; padding-top: 8px; margin-top: 8px; }
           </style>
         </head>
         <body>${printArea.innerHTML}</body>
       </html>
     `)
     w.document.close()
-    w.onload = () => { w.focus(); w.print(); w.close(); }
+    w.onload = () => { w.focus(); w.print(); w.close() }
+  }
+
+  function whatsappBhejo() {
+    const mobile = grahak?.mobile?.replace(/\D/g, "")
+    const dukaanNaam = dukaan?.naam ?? "हमारी दुकान"
+    const samaanList = items.map((row) =>
+      `• ${row.samaan?.naam ?? "सामान"} × ${row.bill_item.matra} = ₹${row.bill_item.kul}`
+    ).join("\n")
+
+    const message =
+      `🧾 *बिल - ${bill.billNumber}*\n` +
+      `📅 तारीख: ${bill.banaya?.slice(0, 10)}\n` +
+      `🏪 ${dukaanNaam}\n\n` +
+      `*सामान:*\n${samaanList}\n\n` +
+      `💰 कुल रकम: *₹${bill.kulRakam}*\n` +
+      `🧾 GST: ₹${bill.gstRakam}\n` +
+      `💳 भुगतान: ${bill.bhugtanVidhi}\n\n` +
+      `धन्यवाद! 🙏`
+
+    const encoded = encodeURIComponent(message)
+    const url = mobile
+      ? `https://wa.me/91${mobile}?text=${encoded}`
+      : `https://wa.me/?text=${encoded}`
+
+    window.open(url, "_blank")
   }
 
   return (
-    <button
-      onClick={handlePrint}
-      className="bg-[#0f2d5e] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#1a3f7a]">
-      🖨️ प्रिंट करें
-    </button>
+    <div className="flex gap-2 flex-wrap">
+      <button onClick={handlePrint}
+        className="bg-[#0f2d5e] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#1a3f7a]">
+        🖨️ प्रिंट करें
+      </button>
+      <button onClick={downloadPDF}
+        className="bg-green-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-green-700">
+        📄 PDF डाउनलोड
+      </button>
+      <button onClick={whatsappBhejo}
+        className="bg-[#25D366] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#1ebe5d]">
+        💬 WhatsApp भेजें
+      </button>
+    </div>
   )
 }
