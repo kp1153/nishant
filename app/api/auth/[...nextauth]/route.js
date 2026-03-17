@@ -1,7 +1,6 @@
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
-import { db } from "@/db"
-import { sql } from "drizzle-orm"
+import { client } from "@/db"
 import { Resend } from "resend"
 
 export const authOptions = {
@@ -16,7 +15,7 @@ export const authOptions = {
       const resend = new Resend(process.env.RESEND_API_KEY)
       const email = user.email
 
-      await db.run(sql`CREATE TABLE IF NOT EXISTS nishant_users (
+      await client.execute(`CREATE TABLE IF NOT EXISTS nishant_users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT UNIQUE,
         name TEXT,
@@ -26,10 +25,16 @@ export const authOptions = {
         status TEXT NOT NULL DEFAULT 'trial'
       )`)
 
-      const existing = await db.run(sql`SELECT * FROM nishant_users WHERE email = ${email}`)
+      const existing = await client.execute({
+        sql: "SELECT * FROM nishant_users WHERE email = ?",
+        args: [email],
+      })
 
       if (existing.rows.length === 0) {
-        await db.run(sql`INSERT INTO nishant_users (email, name, status) VALUES (${email}, ${user.name}, 'trial')`)
+        await client.execute({
+          sql: "INSERT INTO nishant_users (email, name, status) VALUES (?, ?, 'trial')",
+          args: [email, user.name],
+        })
 
         await resend.emails.send({
           from: "Nishant Software <onboarding@resend.dev>",
@@ -52,7 +57,10 @@ export const authOptions = {
         const now = new Date()
         const daysPassed = Math.floor((now - trialStart) / (1000 * 60 * 60 * 24))
         if (daysPassed >= 7) {
-          await db.run(sql`UPDATE nishant_users SET status = 'expired' WHERE email = ${email}`)
+          await client.execute({
+            sql: "UPDATE nishant_users SET status = 'expired' WHERE email = ?",
+            args: [email],
+          })
           return "/payment"
         }
       }
@@ -62,7 +70,10 @@ export const authOptions = {
 
     async session({ session }) {
       const email = session.user.email
-      const result = await db.run(sql`SELECT * FROM nishant_users WHERE email = ${email}`)
+      const result = await client.execute({
+        sql: "SELECT * FROM nishant_users WHERE email = ?",
+        args: [email],
+      })
       if (result.rows.length > 0) {
         session.user.dbUser = result.rows[0]
       }

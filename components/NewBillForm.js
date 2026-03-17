@@ -1,6 +1,7 @@
 ﻿"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { masterCatalog } from "@/lib/catalog";
 
 const paymentMethods = ["नकद", "UPI", "उधार", "आंशिक"];
 
@@ -18,9 +19,11 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
   const [items, setItems] = useState([]);
   const [payment, setPayment] = useState("नकद");
   const [searchGrahak, setSearchGrahak] = useState("");
-  const [searchSamaan, setSearchSamaan] = useState("");
   const [saving, setSaving] = useState(false);
   const [manual, setManual] = useState(false);
+  const [searchMode, setSearchMode] = useState("search");
+  const [selectedShreni, setSelectedShreni] = useState(null);
+  const [searchSamaan, setSearchSamaan] = useState("");
   const [manualItem, setManualItem] = useState({
     naam: "",
     mulya: "",
@@ -62,14 +65,55 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
     setSearchSamaan("");
   }
 
+  function addCatalogItem(item, shreni) {
+    const existing = samaanSuchi?.find((s) => s.naam === item.naam);
+    if (existing) {
+      addItem(existing);
+      return;
+    }
+    const id = `catalog-${Date.now()}`;
+    const exists = items.find((i) => i.naam === item.naam);
+    if (exists) {
+      setItems(
+        items.map((i) =>
+          i.naam === item.naam ? { ...i, quantity: i.quantity + 1 } : i,
+        ),
+      );
+    } else {
+      setItems([
+        ...items,
+        {
+          id,
+          naam: item.naam,
+          bikriMulya: 0,
+          quantity: 1,
+          gstDar: item.gstDar,
+          hsnCode: item.hsnCode,
+          shreni,
+          ikaai: item.ikaai,
+          isManual: true,
+        },
+      ]);
+    }
+  }
+
   function updateQty(id, val) {
     if (val < 1) return;
     setItems(items.map((i) => (i.id === id ? { ...i, quantity: val } : i)));
   }
 
+  function updatePrice(id, val) {
+    setItems(
+      items.map((i) =>
+        i.id === id ? { ...i, bikriMulya: parseFloat(val) || 0 } : i,
+      ),
+    );
+  }
+
   function removeItem(id) {
     setItems(items.filter((i) => i.id !== id));
   }
+
   function addManualItem() {
     if (!manualItem.naam || !manualItem.mulya) return;
     const id = `manual-${Date.now()}`;
@@ -246,9 +290,33 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
               onClick={() => setManual(!manual)}
               className="text-xs font-semibold bg-gray-100 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-200"
             >
-              {manual ? "लिस्ट से चुनें" : "+ मैनुअल जोड़ें"}
+              {manual ? "खोज से चुनें" : "+ मैनुअल जोड़ें"}
             </button>
           </div>
+
+          {!manual && (
+            <div className="flex gap-2 mb-3">
+              <button
+                onClick={() => {
+                  setSearchMode("search");
+                  setSelectedShreni(null);
+                }}
+                className={`flex-1 py-2 rounded-lg text-xs font-semibold border transition-all ${searchMode === "search" ? "bg-[#0f2d5e] text-white border-[#0f2d5e]" : "bg-white text-gray-600 border-gray-200"}`}
+              >
+                🔍 नाम से खोजें
+              </button>
+              <button
+                onClick={() => {
+                  setSearchMode("category");
+                  setSelectedShreni(null);
+                }}
+                className={`flex-1 py-2 rounded-lg text-xs font-semibold border transition-all ${searchMode === "category" ? "bg-[#0f2d5e] text-white border-[#0f2d5e]" : "bg-white text-gray-600 border-gray-200"}`}
+              >
+                📋 Category से चुनें
+              </button>
+            </div>
+          )}
+
           {manual && (
             <div className="flex flex-col gap-2 mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
               <input
@@ -264,36 +332,36 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                   <div className="text-xs text-gray-400 mb-1">मूल्य ₹</div>
                   <input
                     type="number"
-                    placeholder="जैसे: 500"
+                    placeholder="500"
                     value={manualItem.mulya}
                     onChange={(e) =>
                       setManualItem({ ...manualItem, mulya: e.target.value })
                     }
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-400 text-gray-800"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none text-gray-800"
                   />
                 </div>
                 <div>
                   <div className="text-xs text-gray-400 mb-1">मात्रा</div>
                   <input
                     type="number"
-                    placeholder="जैसे: 2"
+                    placeholder="1"
                     value={manualItem.matra}
                     onChange={(e) =>
                       setManualItem({ ...manualItem, matra: e.target.value })
                     }
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-400 text-gray-800"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none text-gray-800"
                   />
                 </div>
                 <div>
                   <div className="text-xs text-gray-400 mb-1">GST %</div>
                   <input
                     type="number"
-                    placeholder="जैसे: 18"
+                    placeholder="18"
                     value={manualItem.gstDar}
                     onChange={(e) =>
                       setManualItem({ ...manualItem, gstDar: e.target.value })
                     }
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-400 text-gray-800"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none text-gray-800"
                   />
                 </div>
               </div>
@@ -305,44 +373,115 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
               </button>
             </div>
           )}
-          <div>
-            <input
-              className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-gray-400 text-gray-800"
-              placeholder="सामान का नाम लिखें"
-              value={searchSamaan}
-              onChange={(e) => setSearchSamaan(e.target.value)}
-            />
-            {searchSamaan && (
-              <div className="w-full bg-white border border-gray-200 rounded-lg mt-1 shadow-sm max-h-48 overflow-y-auto">
-                {filteredSamaan?.length === 0 ? (
-                  <div className="px-4 py-3 text-sm text-gray-400">
-                    सामान नहीं मिला
-                  </div>
-                ) : (
-                  filteredSamaan?.map((s) => (
-                    <div
-                      key={s.id}
-                      onClick={() => addItem(s)}
-                      className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer flex justify-between items-center border-b border-gray-50"
-                    >
-                      <div>
-                        <div className="font-semibold text-sm text-gray-800">
-                          {s.naam}
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          {s.shreni} · {s.matra} {s.ikaai} बचा · GST{" "}
-                          {s.gstDar ?? 18}%
-                        </div>
-                      </div>
-                      <div className="text-sm font-bold text-gray-700">
-                        ₹{s.bikriMulya}
-                      </div>
+
+          {!manual && searchMode === "search" && (
+            <div>
+              <input
+                className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-gray-400 text-gray-800"
+                placeholder="सामान का नाम लिखें"
+                value={searchSamaan}
+                onChange={(e) => setSearchSamaan(e.target.value)}
+              />
+              {searchSamaan && (
+                <div className="w-full bg-white border border-gray-200 rounded-lg mt-1 shadow-sm max-h-48 overflow-y-auto">
+                  {filteredSamaan?.length === 0 ? (
+                    <div className="px-4 py-3 text-sm text-gray-400">
+                      सामान नहीं मिला
                     </div>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
+                  ) : (
+                    filteredSamaan?.map((s) => (
+                      <div
+                        key={s.id}
+                        onClick={() => addItem(s)}
+                        className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer flex justify-between items-center border-b border-gray-50"
+                      >
+                        <div>
+                          <div className="font-semibold text-sm text-gray-800">
+                            {s.naam}
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {s.shreni} · {s.matra} {s.ikaai} बचा · GST{" "}
+                            {s.gstDar ?? 18}%
+                          </div>
+                        </div>
+                        <div className="text-sm font-bold text-gray-700">
+                          ₹{s.bikriMulya}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {!manual && searchMode === "category" && (
+            <div>
+              {!selectedShreni ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {masterCatalog.map((cat) => (
+                    <button
+                      key={cat.shreni}
+                      onClick={() => setSelectedShreni(cat.shreni)}
+                      className="py-2.5 px-3 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-[#0f2d5e] hover:text-white hover:border-[#0f2d5e] transition-all text-center"
+                    >
+                      {cat.shreni}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <button
+                      onClick={() => setSelectedShreni(null)}
+                      className="text-xs text-blue-600 hover:underline"
+                    >
+                      ← वापस
+                    </button>
+                    <span className="text-sm font-semibold text-gray-700">
+                      {selectedShreni}
+                    </span>
+                  </div>
+                  <div className="space-y-1 max-h-60 overflow-y-auto">
+                    {masterCatalog
+                      .find((c) => c.shreni === selectedShreni)
+                      ?.samaan.map((item) => {
+                        const inStock = samaanSuchi?.find(
+                          (s) => s.naam === item.naam,
+                        );
+                        return (
+                          <div
+                            key={item.naam}
+                            onClick={() => addCatalogItem(item, selectedShreni)}
+                            className="flex justify-between items-center px-4 py-2.5 rounded-lg hover:bg-blue-50 cursor-pointer border border-transparent hover:border-blue-200"
+                          >
+                            <div>
+                              <div className="text-sm font-semibold text-gray-800">
+                                {item.naam}
+                              </div>
+                              <div className="text-xs text-gray-400">
+                                GST: {item.gstDar}% · {item.ikaai}
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              {inStock ? (
+                                <div className="text-xs font-bold text-green-700">
+                                  ₹{inStock.bikriMulya}
+                                </div>
+                              ) : (
+                                <div className="text-xs text-gray-400">
+                                  स्टॉक में नहीं
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {items.length > 0 && (
             <>
@@ -372,7 +511,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                       <div className="text-xs text-gray-400 mt-0.5">
                         HSN: {i.hsnCode ?? "—"} · GST: {i.gstDar ?? 18}%
                       </div>
-                      <div className="flex items-center gap-3 mt-2">
+                      <div className="flex items-center gap-3 mt-2 flex-wrap">
                         <input
                           type="number"
                           min={1}
@@ -382,9 +521,14 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                           }
                           className="w-16 border border-gray-200 rounded px-2 py-1 text-center text-sm outline-none text-gray-800"
                         />
-                        <span className="text-xs text-gray-500">
-                          × ₹{i.bikriMulya}
-                        </span>
+                        <span className="text-xs text-gray-500">× </span>
+                        <input
+                          type="number"
+                          min={0}
+                          value={i.bikriMulya}
+                          onChange={(e) => updatePrice(i.id, e.target.value)}
+                          className="w-24 border border-gray-200 rounded px-2 py-1 text-center text-sm outline-none text-gray-800"
+                        />
                         <span className="ml-auto text-sm font-bold text-green-700">
                           ₹{kul}
                         </span>
@@ -404,7 +548,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                       <th className="px-3 py-2 text-left">सामान</th>
                       <th className="px-3 py-2 text-left">HSN</th>
                       <th className="px-3 py-2 text-center">मात्रा</th>
-                      <th className="px-3 py-2 text-right">मूल्य</th>
+                      <th className="px-3 py-2 text-right">मूल्य ₹</th>
                       <th className="px-3 py-2 text-right">GST%</th>
                       <th className="px-3 py-2 text-right">CGST</th>
                       <th className="px-3 py-2 text-right">SGST</th>
@@ -438,8 +582,16 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                               className="w-16 border border-gray-200 rounded px-2 py-1 text-center text-sm outline-none text-gray-800"
                             />
                           </td>
-                          <td className="px-3 py-2 text-right text-gray-700">
-                            ₹{i.bikriMulya}
+                          <td className="px-3 py-2 text-right">
+                            <input
+                              type="number"
+                              min={0}
+                              value={i.bikriMulya}
+                              onChange={(e) =>
+                                updatePrice(i.id, e.target.value)
+                              }
+                              className="w-24 border border-gray-200 rounded px-2 py-1 text-right text-sm outline-none text-gray-800"
+                            />
                           </td>
                           <td className="px-3 py-2 text-right text-gray-700">
                             {i.gstDar ?? 18}%

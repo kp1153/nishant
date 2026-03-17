@@ -1,5 +1,4 @@
-import { db } from "@/db"
-import { sql } from "drizzle-orm"
+import { client } from "@/db"
 import { Resend } from "resend"
 
 export async function POST(req) {
@@ -11,7 +10,7 @@ export async function POST(req) {
       return Response.json({ success: false, message: "Phone required" }, { status: 400 })
     }
 
-    await db.run(sql`CREATE TABLE IF NOT EXISTS nishant_users (
+    await client.execute(`CREATE TABLE IF NOT EXISTS nishant_users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT UNIQUE,
       name TEXT,
@@ -21,13 +20,19 @@ export async function POST(req) {
       status TEXT NOT NULL DEFAULT 'trial'
     )`)
 
-    const existing = await db.run(sql`SELECT * FROM nishant_users WHERE phone = ${phone}`)
+    const existing = await client.execute({
+      sql: "SELECT * FROM nishant_users WHERE phone = ?",
+      args: [phone],
+    })
 
     if (existing.rows.length > 0) {
       return Response.json({ success: true, user: existing.rows[0] })
     }
 
-    await db.run(sql`INSERT INTO nishant_users (phone, status) VALUES (${phone}, 'trial')`)
+    await client.execute({
+      sql: "INSERT INTO nishant_users (phone, status) VALUES (?, 'trial')",
+      args: [phone],
+    })
 
     await resend.emails.send({
       from: "Nishant Software <onboarding@resend.dev>",
@@ -36,7 +41,10 @@ export async function POST(req) {
       html: `<p>नया user register हुआ।</p><p>Phone: ${phone}</p>`,
     })
 
-    const newUser = await db.run(sql`SELECT * FROM nishant_users WHERE phone = ${phone}`)
+    const newUser = await client.execute({
+      sql: "SELECT * FROM nishant_users WHERE phone = ?",
+      args: [phone],
+    })
 
     return Response.json({ success: true, user: newUser.rows[0] })
   } catch (error) {

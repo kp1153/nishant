@@ -1,15 +1,17 @@
-import { db } from "@/db"
-import { sql } from "drizzle-orm"
+import { client } from "@/db"
 
 export async function POST(req) {
   try {
-    const { phone } = await req.json()
+    const { email } = await req.json()
 
-    if (!phone) {
-      return Response.json({ success: false, message: "Phone required" }, { status: 400 })
+    if (!email) {
+      return Response.json({ success: false, message: "Email required" }, { status: 400 })
     }
 
-    const result = await db.run(sql`SELECT * FROM nishant_users WHERE phone = ${phone}`)
+    const result = await client.execute({
+      sql: "SELECT * FROM nishant_users WHERE email = ?",
+      args: [email],
+    })
 
     if (result.rows.length === 0) {
       return Response.json({ success: false, status: "not_found" })
@@ -22,7 +24,10 @@ export async function POST(req) {
       const now = new Date()
 
       if (expiry < now) {
-        await db.run(sql`UPDATE nishant_users SET status = 'expired' WHERE phone = ${phone}`)
+        await client.execute({
+          sql: "UPDATE nishant_users SET status = 'expired' WHERE email = ?",
+          args: [email],
+        })
         return Response.json({ success: false, status: "expired" })
       }
 
@@ -36,18 +41,17 @@ export async function POST(req) {
       const daysPassed = Math.floor((now - trialStart) / (1000 * 60 * 60 * 24))
 
       if (daysPassed >= 7) {
-        await db.run(sql`UPDATE nishant_users SET status = 'expired' WHERE phone = ${phone}`)
+        await client.execute({
+          sql: "UPDATE nishant_users SET status = 'expired' WHERE email = ?",
+          args: [email],
+        })
         return Response.json({ success: false, status: "expired" })
       }
 
       return Response.json({ success: true, status: "trial", daysLeft: 7 - daysPassed })
     }
 
-    if (user.status === "expired") {
-      return Response.json({ success: false, status: "expired" })
-    }
-
-    return Response.json({ success: false, status: "unknown" })
+    return Response.json({ success: false, status: "expired" })
   } catch (error) {
     return Response.json({ success: false, error: error.message }, { status: 500 })
   }
