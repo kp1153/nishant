@@ -20,9 +20,23 @@
     "directories": {
       "output": "dist"
     },
+    "files": [
+      ".next/**/*",
+      "node_modules/**/*",
+      "electron.js",
+      "package.json",
+      "public/**/*"
+    ],
     "win": {
       "target": "nsis",
       "icon": "public/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "निशांत"
     }
   },
   "dependencies": {
