@@ -52,7 +52,7 @@ export async function POST(req) {
 
     await resend.emails.send({
       from: "Nishant Software <onboarding@resend.dev>",
-      to: ["hamaramorcha1153@gmail.com"],
+      to: ["prasad.kamta@gmail.com"],
       subject: `नया payment — ${name}`,
       html: `<p>नाम: ${name}</p><p>Email: ${email}</p><p>Phone: ${phone}</p><p>Plan: ${plan}</p><p>Payment ID: ${razorpay_payment_id}</p><p>Expiry: ${expiryDate.toDateString()}</p><p>Reminder Date: ${reminderDate.toDateString()}</p>`,
     })

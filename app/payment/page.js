@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import Script from "next/script";
+import { useRouter } from "next/navigation";
 
 export default function PaymentPage() {
   const [form, setForm] = useState({ name: "", email: "", phone: "" });
   const [plan, setPlan] = useState("new");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const plans = {
     new: { label: "नया — पहली बार (1 साल शामिल)", amount: 5500 },
@@ -21,52 +23,58 @@ export default function PaymentPage() {
 
     setLoading(true);
 
-    const orderRes = await fetch("/api/razorpay/create-order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: plans[plan].amount, plan }),
-    });
+    try {
+      const orderRes = await fetch("/api/razorpay/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: plans[plan].amount, plan }),
+      });
 
-    const order = await orderRes.json();
+      const order = await orderRes.json();
 
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: "INR",
-      name: "निशांत हार्डवेयर सॉफ्टवेयर",
-      description: plans[plan].label,
-      order_id: order.id,
-      handler: async function (response) {
-        const verifyRes = await fetch("/api/razorpay/verify-payment", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...response,
-            name: form.name,
-            email: form.email,
-            phone: form.phone,
-            plan: plans[plan].label,
-          }),
-        });
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: "INR",
+        name: "निशांत हार्डवेयर सॉफ्टवेयर",
+        description: plans[plan].label,
+        order_id: order.id,
+        handler: async function (response) {
+          const verifyRes = await fetch("/api/razorpay/verify-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...response,
+              name: form.name,
+              email: form.email,
+              phone: form.phone,
+              plan: plans[plan].label,
+            }),
+          });
 
-        const data = await verifyRes.json();
-        if (data.success) {
-          alert("Payment सफल! आपको email मिलेगी।");
-        } else {
-          alert("कुछ गलत हुआ। WhatsApp करें।");
-        }
-      },
-      prefill: {
-        name: form.name,
-        email: form.email,
-        contact: form.phone,
-      },
-      theme: { color: "#1d4ed8" },
-    };
+          const data = await verifyRes.json();
+          if (data.success) {
+            alert("Payment सफल! Dashboard खुल रहा है।");
+            router.push("/dashboard");
+          } else {
+            alert("कुछ गलत हुआ। WhatsApp करें।");
+          }
+        },
+        prefill: {
+          name: form.name,
+          email: form.email,
+          contact: form.phone,
+        },
+        theme: { color: "#1d4ed8" },
+      };
 
-    const rzp = new window.Razorpay(options);
-    rzp.open();
-    setLoading(false);
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (e) {
+      alert("कुछ गलत हुआ। दोबारा कोशिश करें।");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (

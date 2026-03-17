@@ -11,15 +11,19 @@ export default function DashboardLayout({ children }) {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [offlineAllowed, setOfflineAllowed] = useState(false)
+  const [checked, setChecked] = useState(false)
 
   useEffect(() => {
     const lastVerified = localStorage.getItem("last_verified")
     if (lastVerified && Date.now() - parseInt(lastVerified) < OFFLINE_TTL) {
       setOfflineAllowed(true)
     }
+    setChecked(true)
   }, [])
 
   useEffect(() => {
+    if (!checked) return
+
     if (status === "unauthenticated") {
       if (!offlineAllowed) {
         router.push("/login")
@@ -50,20 +54,27 @@ export default function DashboardLayout({ children }) {
 
       localStorage.setItem("last_verified", Date.now().toString())
     }
-  }, [status, session, router, offlineAllowed])
+  }, [status, session, router, offlineAllowed, checked])
 
-  if (status === "loading" || (status === "unauthenticated" && offlineAllowed)) {
+  if (!checked || status === "loading") {
+    if (offlineAllowed) {
+      return (
+        <div className="flex min-h-screen bg-white">
+          <Sidebar />
+          <main className="w-full md:ml-64 flex-1 p-4 pt-16 pb-24 md:pt-6 md:pb-6">
+            {children}
+          </main>
+        </div>
+      )
+    }
     return (
-      <div className="flex min-h-screen bg-white">
-        <Sidebar />
-        <main className="w-full md:ml-64 flex-1 p-4 pt-16 pb-24 md:pt-6 md:pb-6">
-          {children}
-        </main>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">लोड हो रहा है...</p>
       </div>
     )
   }
 
-  if (status === "unauthenticated") return null
+  if (status === "unauthenticated" && !offlineAllowed) return null
 
   return (
     <div className="flex min-h-screen bg-white">

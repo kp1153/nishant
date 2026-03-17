@@ -22,7 +22,8 @@ export const authOptions = {
         phone TEXT,
         trial_start TEXT DEFAULT CURRENT_TIMESTAMP,
         expiry_date TEXT,
-        status TEXT NOT NULL DEFAULT 'trial'
+        status TEXT NOT NULL DEFAULT 'trial',
+        reminder_sent INTEGER DEFAULT 0
       )`)
 
       const existing = await client.execute({
@@ -32,13 +33,13 @@ export const authOptions = {
 
       if (existing.rows.length === 0) {
         await client.execute({
-          sql: "INSERT INTO nishant_users (email, name, status) VALUES (?, ?, 'trial')",
+          sql: "INSERT INTO nishant_users (email, name, status, reminder_sent) VALUES (?, ?, 'trial', 0)",
           args: [email, user.name],
         })
 
         await resend.emails.send({
           from: "Nishant Software <onboarding@resend.dev>",
-          to: ["hamaramorcha1153@gmail.com"],
+          to: ["prasad.kamta@gmail.com"],
           subject: `नया user — ${email}`,
           html: `<p>नया user register हुआ।</p><p>Email: ${email}</p><p>Name: ${user.name}</p>`,
         })
@@ -56,6 +57,20 @@ export const authOptions = {
         const trialStart = new Date(dbUser.trial_start)
         const now = new Date()
         const daysPassed = Math.floor((now - trialStart) / (1000 * 60 * 60 * 24))
+
+        if (daysPassed === 6 && !dbUser.reminder_sent) {
+          await resend.emails.send({
+            from: "Nishant Software <onboarding@resend.dev>",
+            to: [email],
+            subject: "निशांत सॉफ्टवेयर — Trial कल expire होगा",
+            html: `<p>नमस्ते ${user.name},</p><p>आपका 7 दिन का trial कल expire होगा।</p><p>अभी renew करें: <a href="https://nishant-ten.vercel.app/payment">यहाँ क्लिक करें</a></p>`,
+          })
+          await client.execute({
+            sql: "UPDATE nishant_users SET reminder_sent = 1 WHERE email = ?",
+            args: [email],
+          })
+        }
+
         if (daysPassed >= 7) {
           await client.execute({
             sql: "UPDATE nishant_users SET status = 'expired' WHERE email = ?",
