@@ -1,20 +1,10 @@
 import { db } from "@/db"
 import { sql } from "drizzle-orm"
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { Resend } from "resend"
-
-const resend = new Resend(process.env.RESEND_API_KEY)
-
-export const users = sqliteTable("nishant_users", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  phone: text("phone").notNull().unique(),
-  trialStart: text("trial_start").default(sql`CURRENT_TIMESTAMP`),
-  expiryDate: text("expiry_date"),
-  status: text("status").notNull().default("trial"),
-})
 
 export async function POST(req) {
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY)
     const { phone } = await req.json()
 
     if (!phone) {
@@ -23,7 +13,9 @@ export async function POST(req) {
 
     await db.run(sql`CREATE TABLE IF NOT EXISTS nishant_users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      phone TEXT NOT NULL UNIQUE,
+      email TEXT UNIQUE,
+      name TEXT,
+      phone TEXT,
       trial_start TEXT DEFAULT CURRENT_TIMESTAMP,
       expiry_date TEXT,
       status TEXT NOT NULL DEFAULT 'trial'
@@ -41,7 +33,7 @@ export async function POST(req) {
       from: "Nishant Software <onboarding@resend.dev>",
       to: ["hamaramorcha1153@gmail.com"],
       subject: `नया user — ${phone}`,
-      html: `<p>नया user register हुआ।</p><p>Phone: ${phone}</p><p>Trial शुरू हो गया।</p>`,
+      html: `<p>नया user register हुआ।</p><p>Phone: ${phone}</p>`,
     })
 
     const newUser = await db.run(sql`SELECT * FROM nishant_users WHERE phone = ${phone}`)
