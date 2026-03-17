@@ -1,7 +1,7 @@
 "use client"
 
 import { useSession } from "next-auth/react"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Sidebar from "@/components/Sidebar"
 
@@ -10,10 +10,20 @@ const OFFLINE_TTL = 72 * 60 * 60 * 1000
 export default function DashboardLayout({ children }) {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const [offlineAllowed, setOfflineAllowed] = useState(false)
+
+  useEffect(() => {
+    const lastVerified = localStorage.getItem("last_verified")
+    if (lastVerified && Date.now() - parseInt(lastVerified) < OFFLINE_TTL) {
+      setOfflineAllowed(true)
+    }
+  }, [])
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login")
+      if (!offlineAllowed) {
+        router.push("/login")
+      }
       return
     }
 
@@ -40,31 +50,15 @@ export default function DashboardLayout({ children }) {
 
       localStorage.setItem("last_verified", Date.now().toString())
     }
+  }, [status, session, router, offlineAllowed])
 
-    if (status === "unauthenticated") {
-      const lastVerified = localStorage.getItem("last_verified")
-      if (lastVerified && Date.now() - parseInt(lastVerified) < OFFLINE_TTL) {
-        return
-      }
-      router.push("/login")
-    }
-  }, [status, session, router])
-
-  if (status === "loading") {
-    const lastVerified = localStorage.getItem("last_verified")
-    if (lastVerified && Date.now() - parseInt(lastVerified) < OFFLINE_TTL) {
-      return (
-        <div className="flex min-h-screen bg-white">
-          <Sidebar />
-          <main className="w-full md:ml-64 flex-1 p-4 pt-16 pb-24 md:pt-6 md:pb-6">
-            {children}
-          </main>
-        </div>
-      )
-    }
+  if (status === "loading" || (status === "unauthenticated" && offlineAllowed)) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">लोड हो रहा है...</p>
+      <div className="flex min-h-screen bg-white">
+        <Sidebar />
+        <main className="w-full md:ml-64 flex-1 p-4 pt-16 pb-24 md:pt-6 md:pb-6">
+          {children}
+        </main>
       </div>
     )
   }
