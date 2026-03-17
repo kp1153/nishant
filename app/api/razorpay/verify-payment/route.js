@@ -30,6 +30,9 @@ export async function POST(req) {
     const expiryDate = new Date()
     expiryDate.setFullYear(expiryDate.getFullYear() + 1)
 
+    const reminderDate = new Date(expiryDate)
+    reminderDate.setDate(reminderDate.getDate() - 15)
+
     const existing = await client.execute({
       sql: "SELECT * FROM nishant_users WHERE email = ?",
       args: [email],
@@ -37,12 +40,12 @@ export async function POST(req) {
 
     if (existing.rows.length > 0) {
       await client.execute({
-        sql: "UPDATE nishant_users SET status = 'active', expiry_date = ? WHERE email = ?",
+        sql: "UPDATE nishant_users SET status = 'active', expiry_date = ?, reminder_sent = 0 WHERE email = ?",
         args: [expiryDate.toISOString(), email],
       })
     } else {
       await client.execute({
-        sql: "INSERT INTO nishant_users (email, name, phone, status, expiry_date) VALUES (?, ?, ?, 'active', ?)",
+        sql: "INSERT INTO nishant_users (email, name, phone, status, expiry_date, reminder_sent) VALUES (?, ?, ?, 'active', ?, 0)",
         args: [email, name, phone, expiryDate.toISOString()],
       })
     }
@@ -51,7 +54,7 @@ export async function POST(req) {
       from: "Nishant Software <onboarding@resend.dev>",
       to: ["hamaramorcha1153@gmail.com"],
       subject: `नया payment — ${name}`,
-      html: `<p>नाम: ${name}</p><p>Email: ${email}</p><p>Phone: ${phone}</p><p>Plan: ${plan}</p><p>Payment ID: ${razorpay_payment_id}</p><p>Expiry: ${expiryDate.toDateString()}</p>`,
+      html: `<p>नाम: ${name}</p><p>Email: ${email}</p><p>Phone: ${phone}</p><p>Plan: ${plan}</p><p>Payment ID: ${razorpay_payment_id}</p><p>Expiry: ${expiryDate.toDateString()}</p><p>Reminder Date: ${reminderDate.toDateString()}</p>`,
     })
 
     if (email) {
@@ -59,7 +62,7 @@ export async function POST(req) {
         from: "Nishant Software <onboarding@resend.dev>",
         to: [email],
         subject: "निशांत सॉफ्टवेयर — Payment सफल",
-        html: `<p>धन्यवाद ${name}!</p><p>आपका payment सफल रहा।</p><p>Expiry: ${expiryDate.toDateString()}</p>`,
+        html: `<p>धन्यवाद ${name}!</p><p>आपका payment सफल रहा।</p><p>Expiry: ${expiryDate.toDateString()}</p><p>Renewal reminder: ${reminderDate.toDateString()} को email मिलेगी।</p>`,
       })
     }
 
