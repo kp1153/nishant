@@ -1,6 +1,6 @@
-﻿// F:\amit-hardware\app\layout.js
-import { Baloo_2, Noto_Sans_Devanagari } from "next/font/google"
+﻿import { Baloo_2, Noto_Sans_Devanagari } from "next/font/google"
 import "./globals.css"
+import SessionWrapper from "@/components/SessionWrapper"
 
 const baloo = Baloo_2({
   variable: "--font-baloo",
@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="hi">
       <body className={`${baloo.variable} ${noto.variable} antialiased`}>
-        {children}
+        <SessionWrapper>{children}</SessionWrapper>
       </body>
     </html>
   )

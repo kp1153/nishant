@@ -2,6 +2,8 @@
   "name": "nishant",
   "version": "0.1.0",
   "private": true,
+  "description": "Nishant Hardware Management",
+  "author": "Nishant Hardware",
   "main": "electron.js",
   "scripts": {
     "dev": "next dev",
@@ -9,7 +11,7 @@
     "start": "next start",
     "lint": "eslint",
     "electron": "electron electron.js",
-    "electron-dev": "concurrently \"npm run dev\" \"wait-on http-get://localhost:3000/dashboard && electron electron.js\"",
+    "electron-dev": "node start-electron.js",
     "electron-build": "next build && electron-builder"
   },
   "build": {
@@ -30,6 +32,7 @@
     "jspdf": "^4.2.0",
     "jspdf-autotable": "^5.0.7",
     "next": "16.1.6",
+    "next-auth": "^4.24.13",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },

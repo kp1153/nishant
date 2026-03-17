@@ -1,4 +1,4 @@
-﻿ import { db } from "@/db"
+ import { db } from "@/db"
 import { grahak, samaan } from "@/db/schema"
 import NewBillForm from "@/components/NewBillForm"
 
