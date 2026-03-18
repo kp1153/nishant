@@ -1,32 +1,31 @@
 ﻿"use client"
-
-import { signIn, useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
 export default function LoginPage() {
-  const { data: session, status } = useSession()
   const router = useRouter()
 
   useEffect(() => {
-    if (status === "authenticated") {
-      const user = session?.user?.dbUser
-      if (user?.status === "expired") {
-        router.push("/payment")
-      } else {
-        router.push("/dashboard")
-      }
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("success") === "1") {
+      router.push("/dashboard")
     }
-  }, [status, session, router])
+    if (params.get("expired") === "1") {
+      router.push("/payment")
+    }
+  }, [router])
+
+  const handleLogin = () => {
+    window.location.href = "/api/auth/google"
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-sm text-center">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">निशांत</h1>
         <p className="text-gray-500 text-sm mb-8">हार्डवेयर प्रबंधन सॉफ्टवेयर</p>
-
         <button
-          onClick={() => signIn("google")}
+          onClick={handleLogin}
           className="w-full flex items-center justify-center gap-3 border-2 border-gray-200 rounded-xl py-3 px-4 hover:bg-gray-50 transition font-semibold text-gray-700"
         >
           <svg width="20" height="20" viewBox="0 0 48 48">
@@ -37,7 +36,6 @@ export default function LoginPage() {
           </svg>
           Google से Login करो
         </button>
-
         <p className="text-center text-xs text-gray-400 mt-6">
           पहली बार? 7 दिन बिल्कुल मुफ्त।
         </p>
