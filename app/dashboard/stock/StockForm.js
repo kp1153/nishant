@@ -3,21 +3,11 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 
 const shreniList = [
-  "सेनेटरी वेयर",
-  "नल एवं बाथरूम फिटिंग",
-  "पाइप एवं पाइप फिटिंग",
-  "पेन्ट्स एवं वॉटरप्रूफिंग",
-  "इलेक्ट्रिकल",
-  "हैंड टूल्स",
-  "पावर टूल्स",
-  "दरवाजे एवं खिड़की",
-  "ताले एवं दरवाजा हार्डवेयर",
-  "फास्टनर्स",
-  "मशीनरी एवं पंप",
-  "टाइल्स एवं फ्लोरिंग",
-  "बिल्डिंग मटेरियल",
-  "एल्युमीनियम एवं शीट",
-  "अन्य",
+  "सेनेटरी वेयर", "नल एवं बाथरूम फिटिंग", "पाइप एवं पाइप फिटिंग",
+  "पेन्ट्स एवं वॉटरप्रूफिंग", "इलेक्ट्रिकल", "हैंड टूल्स",
+  "पावर टूल्स", "दरवाजे एवं खिड़की", "ताले एवं दरवाजा हार्डवेयर",
+  "फास्टनर्स", "मशीनरी एवं पंप", "टाइल्स एवं फ्लोरिंग",
+  "बिल्डिंग मटेरियल", "एल्युमीनियम एवं शीट", "अन्य",
 ]
 const ikaaiList = ["नग", "मीटर", "किलो", "लीटर", "पैकेट", "बॉक्स"]
 const gstList = [0, 5, 12, 18, 28]
@@ -71,7 +61,6 @@ export default function StockForm() {
             placeholder="जैसे: गेट वाल्व 1 इंच" value={form.naam}
             onChange={e => setForm({ ...form, naam: e.target.value })} />
         </div>
-
         <div>
           <label className="text-xs text-gray-500 mb-1 block">श्रेणी</label>
           <select className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#0f2d5e]"
@@ -79,7 +68,6 @@ export default function StockForm() {
             {shreniList.map(s => <option key={s}>{s}</option>)}
           </select>
         </div>
-
         <div>
           <label className="text-xs text-gray-500 mb-1 block">इकाई</label>
           <select className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#0f2d5e]"
@@ -87,35 +75,30 @@ export default function StockForm() {
             {ikaaiList.map(i => <option key={i}>{i}</option>)}
           </select>
         </div>
-
         <div>
           <label className="text-xs text-gray-500 mb-1 block">खरीद मूल्य (₹) *</label>
           <input type="number" className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#0f2d5e]"
             placeholder="0" value={form.kharidMulya}
             onChange={e => setForm({ ...form, kharidMulya: e.target.value })} />
         </div>
-
         <div>
           <label className="text-xs text-gray-500 mb-1 block">बिक्री मूल्य (₹) *</label>
           <input type="number" className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#0f2d5e]"
             placeholder="0" value={form.bikriMulya}
             onChange={e => setForm({ ...form, bikriMulya: e.target.value })} />
         </div>
-
         <div>
           <label className="text-xs text-gray-500 mb-1 block">शुरुआती मात्रा</label>
           <input type="number" className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#0f2d5e]"
             placeholder="0" value={form.matra}
             onChange={e => setForm({ ...form, matra: e.target.value })} />
         </div>
-
         <div>
           <label className="text-xs text-gray-500 mb-1 block">HSN कोड</label>
           <input className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#0f2d5e]"
             placeholder="जैसे: 8481" value={form.hsnCode}
             onChange={e => setForm({ ...form, hsnCode: e.target.value })} />
         </div>
-
         <div className="sm:col-span-2">
           <label className="text-xs text-gray-500 mb-2 block">GST दर</label>
           <div className="flex gap-2 flex-wrap">

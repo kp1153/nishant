@@ -423,7 +423,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                     <button
                       key={cat.shreni}
                       onClick={() => setSelectedShreni(cat.shreni)}
-                      className="py-2.5 px-3 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-[#0f2d5e] hover:text-white hover:border-[#0f2d5e] transition-all text-center"
+                      className="py-2.5 px-3 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-blue-50 hover:text-[#0f2d5e] hover:border-[#0f2d5e] transition-all text-center"
                     >
                       {cat.shreni}
                     </button>
