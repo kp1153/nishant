@@ -42,7 +42,7 @@ export default async function BillByoraPage() {
               </div>
             </div>
             <Link href={`/dashboard/bill/${row.bill.id}`}
-              className="mt-3 w-full block text-center bg-[#0f2d5e] text-white py-2 rounded-lg text-xs font-semibold">
+              className="mt-3 w-full block text-center bg-blue-50 text-white py-2 rounded-lg text-xs font-semibold">
               🖨️ प्रिंट करें
             </Link>
           </div>
