@@ -127,7 +127,7 @@ export default function StockPage() {
                 <div className="flex gap-2">
                   {gstList.map(g => (
                     <button type="button" key={g} onClick={() => setEditItem({ ...editItem, gstDar: g })}
-                      className={`px-4 py-1.5 rounded-lg text-sm font-semibold border transition-all ${editItem.gstDar === g ? "bg-[#0f2d5e] text-white border-[#0f2d5e]" : "bg-white text-gray-600 border-gray-200"}`}>
+                      className={`px-4 py-1.5 rounded-lg text-sm font-semibold border transition-all ${editItem.gstDar === g ? "bg-blue-50 text-[#0f2d5e] border-[#0f2d5e]" : "bg-white text-gray-600 border-gray-200"}`}>
                       {g}%
                     </button>
                   ))}
