@@ -98,7 +98,20 @@ export const authOptions = {
   pages: {
     signIn: "/login",
   },
+  useSecureCookies: true,
+  cookies: {
+    pkceCodeVerifier: {
+      name: 'next-auth.pkce.code_verifier',
+      options: {
+        httpOnly: true,
+        sameSite: 'none',
+        path: '/',
+        secure: true,
+      },
+    },
+  },
 }
 
 const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }
+
