@@ -142,7 +142,7 @@ export default function Sidebar() {
                   className={`flex flex-col items-center gap-1 p-3 rounded-xl text-xs font-medium transition-all
                     ${
                       pathname === item.path
-                        ? "bg-[#0f2d5e] text-white"
+                        ? "bg-blue-50 text-[#0f2d5e]"
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                     }`}
                 >
