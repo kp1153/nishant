@@ -24,15 +24,3 @@ export async function GET(req) {
     return NextResponse.json({ ok: false })
   }
 }
-```
-
----
-
-**Vercel पर एक नया environment variable add करो:**
-```
-NEXT_PUBLIC_URL = https://nishant-ten.vercel.app
-```
-
-**`app/api/auth/[...nextauth]/route.js`** — यह file रहने दो, हटाओ मत।
-
-**`components/SessionWrapper.js`** — यह भी रहने दो।
