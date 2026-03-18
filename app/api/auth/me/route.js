@@ -1,26 +1,27 @@
-import { NextResponse } from "next/server"
-import { client } from "@/db"
+import { NextResponse } from "next/server";
+import { client } from "@/db";
 
 export async function GET(req) {
-  const cookie = req.cookies.get("nishant_session")
+  const cookie = req.cookies.get("nishant_session");
 
   if (!cookie) {
-    return NextResponse.json({ ok: false })
+    return NextResponse.json({ ok: false });
   }
 
   try {
-    const session = JSON.parse(Buffer.from(cookie.value, "base64").toString())
+    const session = JSON.parse(decodeURIComponent(escape(atob(cookie.value))));
+
     const result = await client.execute({
       sql: "SELECT * FROM nishant_users WHERE email = ?",
       args: [session.email],
-    })
+    });
 
     if (result.rows.length === 0) {
-      return NextResponse.json({ ok: false })
+      return NextResponse.json({ ok: false });
     }
 
-    return NextResponse.json({ ok: true, user: result.rows[0] })
+    return NextResponse.json({ ok: true, user: result.rows[0] });
   } catch (e) {
-    return NextResponse.json({ ok: false })
+    return NextResponse.json({ ok: false });
   }
 }
