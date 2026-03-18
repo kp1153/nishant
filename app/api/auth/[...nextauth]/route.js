@@ -8,8 +8,16 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+        },
+      },
     }),
   ],
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async signIn({ user }) {
       const resend = new Resend(process.env.RESEND_API_KEY)
@@ -98,20 +106,7 @@ export const authOptions = {
   pages: {
     signIn: "/login",
   },
-  useSecureCookies: true,
-  cookies: {
-    pkceCodeVerifier: {
-      name: 'next-auth.pkce.code_verifier',
-      options: {
-        httpOnly: true,
-        sameSite: 'none',
-        path: '/',
-        secure: true,
-      },
-    },
-  },
 }
 
 const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }
-
