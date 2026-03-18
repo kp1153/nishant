@@ -62,11 +62,11 @@ export default function StockForm() {
 
       <div className="flex gap-2">
         <button onClick={() => setMode("catalog")}
-          className={`flex-1 py-2.5 rounded-lg text-sm font-semibold border transition-all ${mode === "catalog" ? "bg-[#0f2d5e] text-white border-[#0f2d5e]" : "bg-white text-gray-600 border-gray-200"}`}>
+          className={`flex-1 py-2.5 rounded-lg text-sm font-semibold border transition-all ${mode === "catalog" ? "bg-blue-50 text-[#0f2d5e] border-[#0f2d5e]" : "bg-white text-gray-600 border-gray-200"}`}>
           📋 Catalog से चुनें
         </button>
         <button onClick={() => setMode("manual")}
-          className={`flex-1 py-2.5 rounded-lg text-sm font-semibold border transition-all ${mode === "manual" ? "bg-[#0f2d5e] text-white border-[#0f2d5e]" : "bg-white text-gray-600 border-gray-200"}`}>
+          className={`flex-1 py-2.5 rounded-lg text-sm font-semibold border transition-all ${mode === "manual" ? "bg-blue-50 text-[#0f2d5e] border-[#0f2d5e]" : "bg-white text-gray-600 border-gray-200"}`}>
           ✏️ खुद से भरें
         </button>
       </div>
@@ -180,7 +180,7 @@ export default function StockForm() {
               <div className="flex gap-2 flex-wrap">
                 {gstList.map(g => (
                   <button type="button" key={g} onClick={() => setForm({ ...form, gstDar: g })}
-                    className={`px-5 py-2 rounded-lg text-sm font-semibold border transition-all ${form.gstDar === g ? "bg-[#0f2d5e] text-white border-[#0f2d5e]" : "bg-white text-gray-600 border-gray-200 hover:border-[#0f2d5e]"}`}>
+                    className={`px-5 py-2 rounded-lg text-sm font-semibold border transition-all ${form.gstDar === g ? "bg-blue-50 text-[#0f2d5e] border-[#0f2d5e]" : "bg-white text-gray-600 border-gray-200 hover:border-[#0f2d5e]"}`}>
                     {g}%
                   </button>
                 ))}

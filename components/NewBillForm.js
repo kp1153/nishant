@@ -1,9 +1,9 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { masterCatalog } from "@/lib/catalog";
 
-const paymentMethods = ["नकद", "UPI", "उधार", "आंशिक"];
+const paymentMethods = ["???", "UPI", "????", "?????"];
 
 function gstCalc(mulya, matra, gstDar) {
   const base = mulya * matra;
@@ -17,7 +17,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
   const router = useRouter();
   const [selectedGrahak, setSelectedGrahak] = useState(null);
   const [items, setItems] = useState([]);
-  const [payment, setPayment] = useState("नकद");
+  const [payment, setPayment] = useState("???");
   const [searchGrahak, setSearchGrahak] = useState("");
   const [saving, setSaving] = useState(false);
   const [manual, setManual] = useState(false);
@@ -32,7 +32,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
   });
   const [aansikRakam, setAansikRakam] = useState("");
 
-  const udharWala = payment === "उधार" || payment === "आंशिक";
+  const udharWala = payment === "????" || payment === "?????";
 
   const summary = items.reduce(
     (acc, i) => {
@@ -162,11 +162,11 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
   async function saveBill() {
     if (items.length === 0) return;
     if (udharWala && !selectedGrahak?.id)
-      return alert("उधार के लिए ग्राहक जरूरी है");
-    if (payment === "आंशिक") {
+      return alert("???? ?? ??? ?????? ????? ??");
+    if (payment === "?????") {
       const rakam = parseFloat(aansikRakam);
       if (!rakam || rakam <= 0 || rakam >= summary.kul)
-        return alert("आंशिक रकम सही नहीं है");
+        return alert("????? ??? ??? ???? ??");
     }
     setSaving(true);
     const res = await fetch("/api/bill", {
@@ -196,7 +196,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
         kul: parseFloat(summary.kul.toFixed(2)),
         gstRakam: parseFloat((summary.cgst + summary.sgst).toFixed(2)),
         mulyaBeforeGst: parseFloat(summary.base.toFixed(2)),
-        aansikRakam: payment === "आंशिक" ? parseFloat(aansikRakam) : 0,
+        aansikRakam: payment === "?????" ? parseFloat(aansikRakam) : 0,
       }),
     });
     setSaving(false);
@@ -211,9 +211,9 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
       <div className="flex-1 space-y-4">
         <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="flex items-center justify-between mb-3">
-            <div className="font-bold text-gray-700">👤 ग्राहक</div>
+            <div className="font-bold text-gray-700">?? ??????</div>
             <span className="text-xs text-gray-400">
-              {udharWala ? "⚠️ उधार के लिए जरूरी" : "वैकल्पिक"}
+              {udharWala ? "?? ???? ?? ??? ?????" : "????????"}
             </span>
           </div>
           {selectedGrahak ? (
@@ -223,21 +223,21 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                   {selectedGrahak.naam}
                 </div>
                 <div className="text-xs text-gray-500">
-                  {selectedGrahak.mobile ?? "नया ग्राहक"}
+                  {selectedGrahak.mobile ?? "??? ??????"}
                 </div>
               </div>
               <button
                 onClick={() => setSelectedGrahak(null)}
                 className="text-xs text-red-500 font-semibold"
               >
-                बदलें
+                ?????
               </button>
             </div>
           ) : (
             <div>
               <input
                 className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-gray-400 text-gray-800"
-                placeholder="नाम या मोबाइल से खोजें"
+                placeholder="??? ?? ?????? ?? ?????"
                 value={searchGrahak}
                 onChange={(e) => setSearchGrahak(e.target.value)}
               />
@@ -260,20 +260,20 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                   ))}
                   <div className="border-t border-gray-100 p-3 bg-gray-50 space-y-2">
                     <div className="text-xs text-gray-400">
-                      "{searchGrahak}" सूची में नहीं है
+                      "{searchGrahak}" ???? ??? ???? ??
                     </div>
                     <div className="flex gap-2">
                       <button
                         onClick={sirafBilPar}
                         className="flex-1 text-xs font-semibold bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-100"
                       >
-                        सिर्फ बिल पर
+                        ????? ??? ??
                       </button>
                       <button
                         onClick={dbMeinBhiSave}
                         className="flex-1 text-xs font-semibold bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600"
                       >
-                        सूची में भी जोड़ें
+                        ???? ??? ?? ??????
                       </button>
                     </div>
                   </div>
@@ -285,12 +285,12 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
 
         <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="flex items-center justify-between mb-3">
-            <div className="font-bold text-gray-700">📦 सामान जोड़ें</div>
+            <div className="font-bold text-gray-700">?? ????? ??????</div>
             <button
               onClick={() => setManual(!manual)}
               className="text-xs font-semibold bg-gray-100 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-200"
             >
-              {manual ? "खोज से चुनें" : "+ मैनुअल जोड़ें"}
+              {manual ? "??? ?? ?????" : "+ ?????? ??????"}
             </button>
           </div>
 
@@ -301,18 +301,18 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                   setSearchMode("search");
                   setSelectedShreni(null);
                 }}
-                className={`flex-1 py-2 rounded-lg text-xs font-semibold border transition-all ${searchMode === "search" ? "bg-[#0f2d5e] text-white border-[#0f2d5e]" : "bg-white text-gray-600 border-gray-200"}`}
+                className={`flex-1 py-2 rounded-lg text-xs font-semibold border transition-all ${searchMode === "search" ? "bg-blue-50 text-[#0f2d5e] border-[#0f2d5e]" : "bg-white text-gray-600 border-gray-200"}`}
               >
-                🔍 नाम से खोजें
+                ?? ??? ?? ?????
               </button>
               <button
                 onClick={() => {
                   setSearchMode("category");
                   setSelectedShreni(null);
                 }}
-                className={`flex-1 py-2 rounded-lg text-xs font-semibold border transition-all ${searchMode === "category" ? "bg-[#0f2d5e] text-white border-[#0f2d5e]" : "bg-white text-gray-600 border-gray-200"}`}
+                className={`flex-1 py-2 rounded-lg text-xs font-semibold border transition-all ${searchMode === "category" ? "bg-blue-50 text-[#0f2d5e] border-[#0f2d5e]" : "bg-white text-gray-600 border-gray-200"}`}
               >
-                📋 Category से चुनें
+                ?? Category ?? ?????
               </button>
             </div>
           )}
@@ -320,7 +320,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
           {manual && (
             <div className="flex flex-col gap-2 mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
               <input
-                placeholder="सामान का नाम"
+                placeholder="????? ?? ???"
                 value={manualItem.naam}
                 onChange={(e) =>
                   setManualItem({ ...manualItem, naam: e.target.value })
@@ -329,7 +329,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
               />
               <div className="grid grid-cols-3 gap-2">
                 <div>
-                  <div className="text-xs text-gray-400 mb-1">मूल्य ₹</div>
+                  <div className="text-xs text-gray-400 mb-1">????? ?</div>
                   <input
                     type="number"
                     placeholder="500"
@@ -341,7 +341,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                   />
                 </div>
                 <div>
-                  <div className="text-xs text-gray-400 mb-1">मात्रा</div>
+                  <div className="text-xs text-gray-400 mb-1">??????</div>
                   <input
                     type="number"
                     placeholder="1"
@@ -369,7 +369,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                 onClick={addManualItem}
                 className="w-full bg-blue-500 text-white py-2 rounded-lg text-sm font-semibold hover:bg-blue-600"
               >
-                जोड़ें
+                ??????
               </button>
             </div>
           )}
@@ -378,7 +378,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
             <div>
               <input
                 className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-gray-400 text-gray-800"
-                placeholder="सामान का नाम लिखें"
+                placeholder="????? ?? ??? ?????"
                 value={searchSamaan}
                 onChange={(e) => setSearchSamaan(e.target.value)}
               />
@@ -386,7 +386,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                 <div className="w-full bg-white border border-gray-200 rounded-lg mt-1 shadow-sm max-h-48 overflow-y-auto">
                   {filteredSamaan?.length === 0 ? (
                     <div className="px-4 py-3 text-sm text-gray-400">
-                      सामान नहीं मिला
+                      ????? ???? ????
                     </div>
                   ) : (
                     filteredSamaan?.map((s) => (
@@ -400,12 +400,12 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                             {s.naam}
                           </div>
                           <div className="text-xs text-gray-400">
-                            {s.shreni} · {s.matra} {s.ikaai} बचा · GST{" "}
+                            {s.shreni} � {s.matra} {s.ikaai} ??? � GST{" "}
                             {s.gstDar ?? 18}%
                           </div>
                         </div>
                         <div className="text-sm font-bold text-gray-700">
-                          ₹{s.bikriMulya}
+                          ?{s.bikriMulya}
                         </div>
                       </div>
                     ))
@@ -436,7 +436,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                       onClick={() => setSelectedShreni(null)}
                       className="text-xs text-blue-600 hover:underline"
                     >
-                      ← वापस
+                      ? ????
                     </button>
                     <span className="text-sm font-semibold text-gray-700">
                       {selectedShreni}
@@ -460,17 +460,17 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                                 {item.naam}
                               </div>
                               <div className="text-xs text-gray-400">
-                                GST: {item.gstDar}% · {item.ikaai}
+                                GST: {item.gstDar}% � {item.ikaai}
                               </div>
                             </div>
                             <div className="text-right">
                               {inStock ? (
                                 <div className="text-xs font-bold text-green-700">
-                                  ₹{inStock.bikriMulya}
+                                  ?{inStock.bikriMulya}
                                 </div>
                               ) : (
                                 <div className="text-xs text-gray-400">
-                                  स्टॉक में नहीं
+                                  ????? ??? ????
                                 </div>
                               )}
                             </div>
@@ -505,11 +505,11 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                           onClick={() => removeItem(i.id)}
                           className="text-red-400 text-lg leading-none"
                         >
-                          ×
+                          �
                         </button>
                       </div>
                       <div className="text-xs text-gray-400 mt-0.5">
-                        HSN: {i.hsnCode ?? "—"} · GST: {i.gstDar ?? 18}%
+                        HSN: {i.hsnCode ?? "�"} � GST: {i.gstDar ?? 18}%
                       </div>
                       <div className="flex items-center gap-3 mt-2 flex-wrap">
                         <input
@@ -521,7 +521,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                           }
                           className="w-16 border border-gray-200 rounded px-2 py-1 text-center text-sm outline-none text-gray-800"
                         />
-                        <span className="text-xs text-gray-500">× </span>
+                        <span className="text-xs text-gray-500">� </span>
                         <input
                           type="number"
                           min={0}
@@ -530,11 +530,11 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                           className="w-24 border border-gray-200 rounded px-2 py-1 text-center text-sm outline-none text-gray-800"
                         />
                         <span className="ml-auto text-sm font-bold text-green-700">
-                          ₹{kul}
+                          ?{kul}
                         </span>
                       </div>
                       <div className="text-xs text-gray-400 mt-1">
-                        CGST: ₹{cgst} + SGST: ₹{sgst}
+                        CGST: ?{cgst} + SGST: ?{sgst}
                       </div>
                     </div>
                   );
@@ -545,14 +545,14 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-gray-50 text-xs text-gray-500">
-                      <th className="px-3 py-2 text-left">सामान</th>
+                      <th className="px-3 py-2 text-left">?????</th>
                       <th className="px-3 py-2 text-left">HSN</th>
-                      <th className="px-3 py-2 text-center">मात्रा</th>
-                      <th className="px-3 py-2 text-right">मूल्य ₹</th>
+                      <th className="px-3 py-2 text-center">??????</th>
+                      <th className="px-3 py-2 text-right">????? ?</th>
                       <th className="px-3 py-2 text-right">GST%</th>
                       <th className="px-3 py-2 text-right">CGST</th>
                       <th className="px-3 py-2 text-right">SGST</th>
-                      <th className="px-3 py-2 text-right">कुल</th>
+                      <th className="px-3 py-2 text-right">???</th>
                       <th></th>
                     </tr>
                   </thead>
@@ -569,7 +569,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                             {i.naam}
                           </td>
                           <td className="px-3 py-2 text-gray-400">
-                            {i.hsnCode ?? "—"}
+                            {i.hsnCode ?? "�"}
                           </td>
                           <td className="px-3 py-2 text-center">
                             <input
@@ -597,20 +597,20 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                             {i.gstDar ?? 18}%
                           </td>
                           <td className="px-3 py-2 text-right text-orange-600">
-                            ₹{cgst}
+                            ?{cgst}
                           </td>
                           <td className="px-3 py-2 text-right text-orange-600">
-                            ₹{sgst}
+                            ?{sgst}
                           </td>
                           <td className="px-3 py-2 text-right font-bold text-gray-800">
-                            ₹{kul}
+                            ?{kul}
                           </td>
                           <td className="px-3 py-2 text-center">
                             <button
                               onClick={() => removeItem(i.id)}
                               className="text-red-400 hover:text-red-600 text-lg"
                             >
-                              ×
+                              �
                             </button>
                           </td>
                         </tr>
@@ -626,38 +626,38 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
 
       <div className="w-full lg:w-72 space-y-4">
         <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
-          <div className="font-bold text-gray-700">💰 बिल सारांश</div>
+          <div className="font-bold text-gray-700">?? ??? ??????</div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-500">कुल आइटम</span>
+            <span className="text-gray-500">??? ????</span>
             <span className="font-semibold text-gray-800">{items.length}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-500">मूल्य (GST से पहले)</span>
+            <span className="text-gray-500">????? (GST ?? ????)</span>
             <span className="font-semibold text-gray-800">
-              ₹{summary.base.toFixed(2)}
+              ?{summary.base.toFixed(2)}
             </span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-500">CGST</span>
             <span className="text-orange-600 font-semibold">
-              ₹{summary.cgst.toFixed(2)}
+              ?{summary.cgst.toFixed(2)}
             </span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-500">SGST</span>
             <span className="text-orange-600 font-semibold">
-              ₹{summary.sgst.toFixed(2)}
+              ?{summary.sgst.toFixed(2)}
             </span>
           </div>
           <div className="border-t border-gray-100 pt-2 flex justify-between">
-            <span className="text-gray-500 text-sm">कुल रकम</span>
+            <span className="text-gray-500 text-sm">??? ???</span>
             <span className="font-bold text-gray-900 text-lg">
-              ₹{summary.kul.toFixed(2)}
+              ?{summary.kul.toFixed(2)}
             </span>
           </div>
 
           <div>
-            <div className="text-sm text-gray-500 mb-2">भुगतान विधि</div>
+            <div className="text-sm text-gray-500 mb-2">?????? ????</div>
             <div className="grid grid-cols-2 gap-2">
               {paymentMethods.map((v) => (
                 <button
@@ -671,21 +671,21 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
             </div>
           </div>
 
-          {payment === "आंशिक" && (
+          {payment === "?????" && (
             <div>
-              <div className="text-sm text-gray-500 mb-1">अभी दी गई रकम</div>
+              <div className="text-sm text-gray-500 mb-1">??? ?? ?? ???</div>
               <input
                 type="number"
                 min={1}
                 max={summary.kul - 1}
                 value={aansikRakam}
                 onChange={(e) => setAansikRakam(e.target.value)}
-                placeholder={`कुल ₹${summary.kul.toFixed(2)} से कम`}
+                placeholder={`??? ?${summary.kul.toFixed(2)} ?? ??`}
                 className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-gray-400 text-gray-800"
               />
               {aansikRakam && (
                 <div className="text-xs text-orange-600 mt-1">
-                  बाकी उधार: ₹
+                  ???? ????: ?
                   {(summary.kul - parseFloat(aansikRakam || 0)).toFixed(2)}
                 </div>
               )}
@@ -697,7 +697,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
             disabled={items.length === 0 || saving}
             className="w-full bg-red-500 text-white py-3 rounded-lg font-bold text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-red-600 transition-colors"
           >
-            {saving ? "सेव हो रहा है..." : "🧾 बिल सेव करें"}
+            {saving ? "??? ?? ??? ??..." : "?? ??? ??? ????"}
           </button>
         </div>
       </div>
