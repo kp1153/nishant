@@ -301,7 +301,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                   setSearchMode("search");
                   setSelectedShreni(null);
                 }}
-                className={`flex-1 py-2 rounded-lg text-xs font-semibold border transition-all ${searchMode === "search" ? "bg-[#0f2d5e] text-white border-[#0f2d5e]" : "bg-white text-gray-600 border-gray-200"}`}
+                className={`flex-1 py-2 rounded-lg text-xs font-semibold border transition-all ${searchMode === "search" ? "bg-blue-50 text-white border-blue-50" : "bg-white text-gray-600 border-gray-200"}`}
               >
                 🔍 नाम से खोजें
               </button>
@@ -310,7 +310,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                   setSearchMode("category");
                   setSelectedShreni(null);
                 }}
-                className={`flex-1 py-2 rounded-lg text-xs font-semibold border transition-all ${searchMode === "category" ? "bg-[#0f2d5e] text-white border-[#0f2d5e]" : "bg-white text-gray-600 border-gray-200"}`}
+                className={`flex-1 py-2 rounded-lg text-xs font-semibold border transition-all ${searchMode === "category" ? "bg-blue-50 text-white border-blue-50" : "bg-white text-gray-600 border-gray-200"}`}
               >
                 📋 Category से चुनें
               </button>
@@ -423,7 +423,7 @@ export default function NewBillForm({ grahakSuchi, samaanSuchi }) {
                     <button
                       key={cat.shreni}
                       onClick={() => setSelectedShreni(cat.shreni)}
-                      className="py-2.5 px-3 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-blue-50 hover:text-[#0f2d5e] hover:border-[#0f2d5e] transition-all text-center"
+                      className="py-2.5 px-3 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-blue-50 hover:text-blue-50 hover:border-blue-50 transition-all text-center"
                     >
                       {cat.shreni}
                     </button>

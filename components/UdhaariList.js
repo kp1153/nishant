@@ -13,7 +13,7 @@ export default async function UdhaariList() {
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
       <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-        <span className="font-bold text-[#0f2d5e]">💳 उधारी बाकी</span>
+        <span className="font-bold text-blue-50">💳 उधारी बाकी</span>
         <button className="text-xs font-semibold text-[#1a3f7a]">सभी देखें →</button>
       </div>
       <div>
@@ -22,7 +22,7 @@ export default async function UdhaariList() {
         ) : (
           baaki.map((row) => (
             <div key={row.udhaari.id} className="flex items-center gap-3 px-5 py-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer">
-              <div className="w-9 h-9 rounded-full bg-[#0f2d5e] flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+              <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
                 {row.grahak?.naam?.[0] ?? "?"}
               </div>
               <div className="flex-1 min-w-0">

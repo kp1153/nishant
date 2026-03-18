@@ -16,7 +16,7 @@ export default async function UdhaariPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-[#0f2d5e]">💳 उधारी</h1>
+      <h1 className="text-xl font-bold text-blue-50">💳 उधारी</h1>
 
       <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-4 inline-block">
         <div className="text-sm text-red-600">कुल बकाया</div>
@@ -33,7 +33,7 @@ export default async function UdhaariPage() {
             <div key={row.udhaari.id} className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="font-semibold text-[#0f2d5e]">{row.grahak?.naam ?? "—"}</div>
+                  <div className="font-semibold text-blue-50">{row.grahak?.naam ?? "—"}</div>
                   <div className="text-xs text-gray-400 mt-0.5">{row.grahak?.mobile ?? "—"}</div>
                 </div>
                 <div className="text-right">

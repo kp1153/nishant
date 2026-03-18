@@ -30,9 +30,9 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6 max-w-lg">
-      <h1 className="text-xl font-bold text-[#0f2d5e]">⚙️ सेटिंग्स</h1>
+      <h1 className="text-xl font-bold text-blue-50">⚙️ सेटिंग्स</h1>
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 space-y-4">
-        <div className="font-bold text-[#0f2d5e] border-b pb-2">दुकान की जानकारी</div>
+        <div className="font-bold text-blue-50 border-b pb-2">दुकान की जानकारी</div>
         {[
           { label: "दुकान का नाम", name: "naam", placeholder: "जैसे: राम हार्डवेयर एंड सेनेटरी" },
           { label: "पता", name: "pata", placeholder: "गली, मोहल्ला" },
@@ -48,12 +48,12 @@ export default function SettingsPage() {
               value={form[f.name]}
               onChange={handleChange}
               placeholder={f.placeholder}
-              className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#0f2d5e]"
+              className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-blue-50"
             />
           </div>
         ))}
         <button onClick={save} disabled={saving}
-          className="w-full bg-[#0f2d5e] text-white py-2.5 rounded-lg font-bold text-sm disabled:opacity-40 hover:bg-[#1a3f7a] transition-colors">
+          className="w-full bg-blue-50 text-white py-2.5 rounded-lg font-bold text-sm disabled:opacity-40 hover:bg-[#1a3f7a] transition-colors">
           {saving ? "सेव हो रहा है..." : saved ? "✅ सेव हो गया" : "सेव करें"}
         </button>
       </div>

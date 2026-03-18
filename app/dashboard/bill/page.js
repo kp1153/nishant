@@ -19,7 +19,7 @@ export default async function BillByoraPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-[#0f2d5e]">📋 बिल ब्यौरा</h1>
+      <h1 className="text-xl font-bold text-blue-50">📋 बिल ब्यौरा</h1>
 
       {/* मोबाइल कार्ड */}
       <div className="space-y-3 lg:hidden">
@@ -29,7 +29,7 @@ export default async function BillByoraPage() {
           <div key={row.bill.id} className="bg-white rounded-xl border border-gray-200 p-4">
             <div className="flex justify-between items-start">
               <div>
-                <div className="text-xs font-bold text-[#0f2d5e]">{row.bill.billNumber}</div>
+                <div className="text-xs font-bold text-blue-50">{row.bill.billNumber}</div>
                 <div className="font-semibold mt-0.5">{row.grahak?.naam ?? "—"}</div>
                 <div className="text-xs text-gray-400 mt-0.5">{row.bill.banaya?.slice(0, 10)}</div>
               </div>
@@ -69,7 +69,7 @@ export default async function BillByoraPage() {
               <tr><td colSpan={8} className="px-5 py-8 text-center text-gray-400">कोई बिल नहीं</td></tr>
             ) : sabhiBill.map((row) => (
               <tr key={row.bill.id} className="border-t border-gray-50 hover:bg-gray-50">
-                <td className="px-5 py-3 font-bold text-[#0f2d5e]">{row.bill.billNumber}</td>
+                <td className="px-5 py-3 font-bold text-blue-50">{row.bill.billNumber}</td>
                 <td className="px-5 py-3">{row.grahak?.naam ?? "—"}</td>
                 <td className="px-5 py-3 text-right">₹{row.bill.mulyaBeforeGst ?? 0}</td>
                 <td className="px-5 py-3 text-right text-orange-600 font-semibold">₹{row.bill.gstRakam ?? 0}</td>
@@ -82,7 +82,7 @@ export default async function BillByoraPage() {
                 <td className="px-5 py-3 text-gray-500">{row.bill.banaya?.slice(0, 10)}</td>
                 <td className="px-5 py-3 text-center">
                   <Link href={`/dashboard/bill/${row.bill.id}`}
-                    className="text-xs font-semibold text-[#0f2d5e] hover:underline">
+                    className="text-xs font-semibold text-blue-50 hover:underline">
                     🖨️ प्रिंट
                   </Link>
                 </td>

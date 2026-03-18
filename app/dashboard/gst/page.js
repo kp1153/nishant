@@ -17,7 +17,7 @@ export default async function GSTPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-[#0f2d5e]">📄 GST रिपोर्ट</h1>
+      <h1 className="text-xl font-bold text-blue-50">📄 GST रिपोर्ट</h1>
 
       {/* मोबाइल कार्ड */}
       <div className="space-y-3 lg:hidden">
@@ -30,7 +30,7 @@ export default async function GSTPage() {
           return (
             <div key={row.mahina} className="bg-white rounded-xl border border-gray-200 p-4 space-y-2">
               <div className="flex justify-between items-center">
-                <span className="font-bold text-[#0f2d5e]">{row.mahina}</span>
+                <span className="font-bold text-blue-50">{row.mahina}</span>
                 <span className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full font-semibold">{row.bilSankhya} बिल</span>
               </div>
               <div className="flex justify-between text-sm">

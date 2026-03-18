@@ -27,10 +27,10 @@ export default async function ReportPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-[#0f2d5e]">📊 बिक्री रिपोर्ट</h1>
+      <h1 className="text-xl font-bold text-blue-50">📊 बिक्री रिपोर्ट</h1>
 
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100 font-bold text-[#0f2d5e]">माहवारी बिक्री</div>
+        <div className="px-5 py-4 border-b border-gray-100 font-bold text-blue-50">माहवारी बिक्री</div>
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-xs text-gray-500 uppercase">
             <tr>
@@ -54,7 +54,7 @@ export default async function ReportPage() {
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100 font-bold text-[#0f2d5e]">शीर्ष 5 ग्राहक</div>
+        <div className="px-5 py-4 border-b border-gray-100 font-bold text-blue-50">शीर्ष 5 ग्राहक</div>
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-xs text-gray-500 uppercase">
             <tr>
@@ -66,7 +66,7 @@ export default async function ReportPage() {
             {top.map((row, i) => (
               <tr key={i} className="border-t border-gray-50 hover:bg-gray-50">
                 <td className="px-5 py-3 font-semibold">{row.naam ?? "—"}</td>
-                <td className="px-5 py-3 text-right font-bold text-[#0f2d5e]">₹{Number(row.kul).toLocaleString("hi-IN")}</td>
+                <td className="px-5 py-3 text-right font-bold text-blue-50">₹{Number(row.kul).toLocaleString("hi-IN")}</td>
               </tr>
             ))}
           </tbody>

@@ -16,7 +16,7 @@ export default async function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-[#0f2d5e]">📊 आज का डैशबोर्ड</h1>
+      <h1 className="text-xl font-bold text-blue-50">📊 आज का डैशबोर्ड</h1>
 
       {/* स्टैट कार्ड — मोबाइल पर 2 कॉलम, डेस्कटॉप पर 4 */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">

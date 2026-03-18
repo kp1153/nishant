@@ -38,7 +38,7 @@ export default async function PrintPage({ params }) {
 
       <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4 print:border-0 print:rounded-none print:p-0 print-area">
         <div className="text-center border-b border-gray-200 pb-4">
-          <div className="text-xl font-bold text-[#0f2d5e]">
+          <div className="text-xl font-bold text-blue-50">
             {dukaanInfo?.naam ?? "मेरी दुकान"}
           </div>
           {dukaanInfo?.tagline && (
@@ -60,7 +60,7 @@ export default async function PrintPage({ params }) {
         <div className="flex justify-between text-sm">
           <div>
             <div className="text-gray-500">बिल नंबर</div>
-            <div className="font-bold text-[#0f2d5e]">{b.billNumber}</div>
+            <div className="font-bold text-blue-50">{b.billNumber}</div>
           </div>
           <div className="text-right">
             <div className="text-gray-500">तारीख</div>
@@ -118,7 +118,7 @@ export default async function PrintPage({ params }) {
             <span className="text-gray-500">कुल GST</span>
             <span className="text-orange-600 font-semibold w-24 text-right">₹{b.gstRakam}</span>
           </div>
-          <div className="flex gap-8 text-base font-bold text-[#0f2d5e] border-t border-gray-200 pt-2 mt-1">
+          <div className="flex gap-8 text-base font-bold text-blue-50 border-t border-gray-200 pt-2 mt-1">
             <span>कुल रकम</span>
             <span className="w-24 text-right">₹{b.kulRakam}</span>
           </div>

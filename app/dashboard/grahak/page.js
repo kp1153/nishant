@@ -7,7 +7,7 @@ export default async function GrahakPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-[#0f2d5e]">👥 ग्राहक सूची</h1>
+      <h1 className="text-xl font-bold text-blue-50">👥 ग्राहक सूची</h1>
       <GrahakForm />
 
       {/* मोबाइल कार्ड */}
@@ -16,11 +16,11 @@ export default async function GrahakPage() {
           <div className="bg-white rounded-xl border border-gray-200 px-5 py-8 text-center text-gray-400 text-sm">कोई ग्राहक नहीं</div>
         ) : suchi.map((g) => (
           <div key={g.id} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#0f2d5e] flex items-center justify-center text-white font-bold flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-white font-bold flex-shrink-0">
               {g.naam?.[0]}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-semibold text-[#0f2d5e] truncate">{g.naam}</div>
+              <div className="font-semibold text-blue-50 truncate">{g.naam}</div>
               <div className="text-xs text-gray-400 mt-0.5">{g.mobile}</div>
               {g.pata && <div className="text-xs text-gray-400 truncate">{g.pata}</div>}
             </div>

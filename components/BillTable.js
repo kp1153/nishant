@@ -20,7 +20,7 @@ export default async function BillTable() {
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
       <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-        <span className="font-bold text-[#0f2d5e]">🧾 आज के बिल</span>
+        <span className="font-bold text-blue-50">🧾 आज के बिल</span>
         <button className="text-xs font-semibold text-[#1a3f7a]">सभी देखें →</button>
       </div>
 
@@ -32,7 +32,7 @@ export default async function BillTable() {
           aajKeBill.map((row) => (
             <div key={row.bill.id} className="px-4 py-3 flex items-center justify-between">
               <div>
-                <div className="text-xs font-bold text-[#0f2d5e]">{row.bill.billNumber}</div>
+                <div className="text-xs font-bold text-blue-50">{row.bill.billNumber}</div>
                 <div className="text-sm font-semibold mt-0.5">{row.grahak?.naam ?? "—"}</div>
               </div>
               <div className="text-right">
@@ -67,7 +67,7 @@ export default async function BillTable() {
           ) : (
             aajKeBill.map((row) => (
               <tr key={row.bill.id} className="border-t border-gray-50 hover:bg-gray-50">
-                <td className="px-5 py-3 text-xs font-bold text-[#0f2d5e]">{row.bill.billNumber}</td>
+                <td className="px-5 py-3 text-xs font-bold text-blue-50">{row.bill.billNumber}</td>
                 <td className="px-5 py-3 text-sm font-semibold">{row.grahak?.naam ?? "—"}</td>
                 <td className="px-5 py-3 text-sm font-bold text-green-700">₹{row.bill.kulRakam}</td>
                 <td className="px-5 py-3 text-xs text-orange-600 font-semibold">₹{row.bill.gstRakam ?? 0}</td>

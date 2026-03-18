@@ -6,7 +6,7 @@
         <span className="text-2xl">{icon}</span>
         <span className={`text-xs font-semibold ${color}`}>{trend}</span>
       </div>
-      <div className="text-xl font-bold text-[#0f2d5e] truncate">{value}</div>
+      <div className="text-xl font-bold text-blue-50 truncate">{value}</div>
       <div className="text-xs text-gray-400 mt-1 truncate">{label}</div>
     </div>
   )
