@@ -11,7 +11,9 @@ export default function Home() {
     <main className="min-h-screen bg-white text-gray-800 font-sans">
       {/* NAV */}
       <nav className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-50">
-        <span className="text-lg font-bold text-blue-700">⚙️ निशांत सॉफ्टवेयर</span>
+        <span className="text-lg font-bold text-blue-700">
+          ⚙️ निशांत सॉफ्टवेयर
+        </span>
         <div className="flex gap-3">
           <a
             href="https://wa.me/919996865069"
@@ -41,7 +43,8 @@ export default function Home() {
           <span className="text-blue-600">एक ही सॉफ्टवेयर में</span>
         </h1>
         <p className="text-gray-500 text-lg mb-8 max-w-xl mx-auto">
-          बिल, स्टॉक, उधारी, GST रिपोर्ट — सब एक जगह। Windows पर भी, Android पर भी।
+          बिल, स्टॉक, उधारी, GST रिपोर्ट — सब एक जगह। Windows पर भी, Android पर
+          भी।
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
@@ -57,22 +60,50 @@ export default function Home() {
             📱 Android / Web पर खोलें
           </Link>
         </div>
-        <p className="text-xs text-gray-400 mt-4">Windows 10/11 — 64-bit &nbsp;|&nbsp; Android Chrome पर भी चलता है</p>
       </section>
 
       {/* FEATURES */}
       <section className="px-6 py-16 max-w-5xl mx-auto">
-        <h2 className="text-2xl font-bold text-center mb-10">क्या-क्या मिलता है?</h2>
+        <h2 className="text-2xl font-bold text-center mb-10">
+          क्या-क्या मिलता है?
+        </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
           {[
-            { icon: "🧾", title: "GST Billing", desc: "CGST, SGST के साथ तुरंत बिल बनाओ" },
-            { icon: "📦", title: "Stock Management", desc: "सामान का पूरा हिसाब — कम हो तो alert" },
-            { icon: "👥", title: "ग्राहक सूची", desc: "हर ग्राहक की पूरी history एक जगह" },
-            { icon: "💸", title: "उधारी ट्रैकर", desc: "किसने कितना लिया — WhatsApp reminder" },
-            { icon: "📊", title: "Sales Report", desc: "रोज, महीने, साल की बिक्री रिपोर्ट" },
-            { icon: "🖨️", title: "Print & PDF", desc: "बिल print करो या PDF download करो" },
+            {
+              icon: "🧾",
+              title: "GST Billing",
+              desc: "CGST, SGST के साथ तुरंत बिल बनाओ",
+            },
+            {
+              icon: "📦",
+              title: "Stock Management",
+              desc: "सामान का पूरा हिसाब — कम हो तो alert",
+            },
+            {
+              icon: "👥",
+              title: "ग्राहक सूची",
+              desc: "हर ग्राहक की पूरी history एक जगह",
+            },
+            {
+              icon: "💸",
+              title: "उधारी ट्रैकर",
+              desc: "किसने कितना लिया — WhatsApp reminder",
+            },
+            {
+              icon: "📊",
+              title: "Sales Report",
+              desc: "रोज, महीने, साल की बिक्री रिपोर्ट",
+            },
+            {
+              icon: "🖨️",
+              title: "Print & PDF",
+              desc: "बिल print करो या PDF download करो",
+            },
           ].map((f) => (
-            <div key={f.title} className="bg-gray-50 rounded-2xl p-6 text-center hover:shadow-md transition">
+            <div
+              key={f.title}
+              className="bg-gray-50 rounded-2xl p-6 text-center hover:shadow-md transition"
+            >
               <div className="text-4xl mb-3">{f.icon}</div>
               <h3 className="font-bold text-gray-800 mb-1">{f.title}</h3>
               <p className="text-sm text-gray-500">{f.desc}</p>
@@ -84,7 +115,9 @@ export default function Home() {
       {/* PLATFORMS */}
       <section className="bg-gray-50 px-6 py-16">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-10">दो तरीके — एक सॉफ्टवेयर</h2>
+          <h2 className="text-2xl font-bold text-center mb-10">
+            दो तरीके — एक सॉफ्टवेयर
+          </h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-white rounded-2xl p-8 border border-gray-200">
               <div className="text-4xl mb-4">🖥️</div>
@@ -107,7 +140,9 @@ export default function Home() {
               <div className="text-4xl mb-4">📱</div>
               <h3 className="text-xl font-bold mb-3">Android / Tablet App</h3>
               <ul className="text-sm text-gray-600 space-y-2 mb-6">
-                <li>✅ कोई install नहीं — Chrome में खोलो</li>
+                <li>
+                  ✅ Chrome में install करो — Home Screen पर app जैसा चलेगा
+                </li>
                 <li>✅ 10 इंच tablet पर बिल्कुल सही</li>
                 <li>✅ राह चलते stock और उधारी देखो</li>
                 <li>✅ रिपोर्ट कहीं से भी check करो</li>
@@ -140,7 +175,7 @@ export default function Home() {
               <li>✅ 7 दिन free trial</li>
             </ul>
             <Link
-              href="/payment"
+              href="/login"
               className="block bg-white text-blue-600 font-bold py-3 rounded-xl hover:bg-blue-50 transition"
             >
               Trial शुरू करें →
@@ -170,7 +205,9 @@ export default function Home() {
       {/* CTA */}
       <section className="bg-blue-600 text-white text-center px-6 py-16">
         <h2 className="text-2xl font-bold mb-3">आज ही शुरू करें — मुफ्त में</h2>
-        <p className="mb-8 opacity-80">7 दिन पूरी तरह मुफ्त। कोई card नहीं, कोई झंझट नहीं।</p>
+        <p className="mb-8 opacity-80">
+          7 दिन पूरी तरह मुफ्त। कोई card नहीं, कोई झंझट नहीं।
+        </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
             href="https://pub-36b3216d45d24541a20e55f6b3f26d07.r2.dev/%E0%A4%A8%E0%A4%BF%E0%A4%B6%E0%A4%BE%E0%A4%82%E0%A4%A4%20Setup%200.1.0.exe"
@@ -190,11 +227,25 @@ export default function Home() {
       {/* FOOTER */}
       <footer className="text-center text-sm text-gray-400 px-6 py-8 border-t border-gray-100">
         <p className="mb-2">
-          <a href="tel:+919996865069" className="hover:text-blue-600">📞 9996865069</a>
+          <a href="tel:+919996865069" className="hover:text-blue-600">
+            📞 9996865069
+          </a>
           &nbsp;|&nbsp;
-          <a href="mailto:prasad.kamta@gmail.com" className="hover:text-blue-600">✉️ prasad.kamta@gmail.com</a>
+          <a
+            href="mailto:prasad.kamta@gmail.com"
+            className="hover:text-blue-600"
+          >
+            ✉️ prasad.kamta@gmail.com
+          </a>
           &nbsp;|&nbsp;
-          <a href="https://wa.me/919996865069" target="_blank" rel="noopener noreferrer" className="hover:text-green-600">💬 WhatsApp</a>
+          <a
+            href="https://wa.me/919996865069"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-green-600"
+          >
+            💬 WhatsApp
+          </a>
         </p>
         <p>© 2026 निशांत सॉफ्टवेयर — सर्वाधिकार सुरक्षित</p>
       </footer>
