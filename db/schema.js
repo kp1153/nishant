@@ -1,5 +1,5 @@
-﻿import { sql } from "drizzle-orm"
-import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core"
+﻿import { sql } from "drizzle-orm";
+import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const dukaan = sqliteTable("dukaan", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -9,7 +9,7 @@ export const dukaan = sqliteTable("dukaan", {
   mobile: text("mobile").default(""),
   gstin: text("gstin").default(""),
   tagline: text("tagline").default(""),
-})
+});
 
 export const grahak = sqliteTable("grahak", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -18,7 +18,7 @@ export const grahak = sqliteTable("grahak", {
   pata: text("pata"),
   gstin: text("gstin"),
   banaya: text("banaya").default(sql`CURRENT_TIMESTAMP`),
-})
+});
 
 export const samaan = sqliteTable("samaan", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -30,7 +30,7 @@ export const samaan = sqliteTable("samaan", {
   ikaai: text("ikaai").notNull(),
   hsnCode: text("hsn_code"),
   gstDar: real("gst_dar").notNull().default(18),
-})
+});
 
 export const bill = sqliteTable("bill", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -42,7 +42,7 @@ export const bill = sqliteTable("bill", {
   bhugtanVidhi: text("bhugtan_vidhi").notNull(),
   sthiti: text("sthiti").notNull().default("nakad"),
   banaya: text("banaya").default(sql`CURRENT_TIMESTAMP`),
-})
+});
 
 export const billItem = sqliteTable("bill_item", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -54,7 +54,7 @@ export const billItem = sqliteTable("bill_item", {
   cgst: real("cgst").notNull().default(0),
   sgst: real("sgst").notNull().default(0),
   kul: real("kul").notNull(),
-})
+});
 
 export const udhaari = sqliteTable("udhaari", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -63,4 +63,27 @@ export const udhaari = sqliteTable("udhaari", {
   rakam: real("rakam").notNull(),
   chukaya: real("chukaya").notNull().default(0),
   banaya: text("banaya").default(sql`CURRENT_TIMESTAMP`),
-})
+});
+
+export const nishantUsers = sqliteTable("nishant_users", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  email: text("email"),
+  name: text("name"),
+  phone: text("phone"),
+  trialStart: text("trial_start").default(sql`CURRENT_TIMESTAMP`),
+  expiryDate: text("expiry_date"),
+  status: text("status").notNull().default("trial"),
+  reminderSent: integer("reminder_sent").default(0),
+});
+export const views = sqliteTable("views", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  count: integer("count"),
+});
+
+export const softwarePlans = sqliteTable("software_plans", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  softwareKey: text("software_key"),
+  planKey: text("plan_key"),
+  label: text("label"),
+  amount: real("amount"),
+});

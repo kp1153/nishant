@@ -1,4 +1,6 @@
-import { client } from "@/db"
+import { db } from "@/db"
+import { nishantUsers } from "@/db/schema"
+import { eq } from "drizzle-orm"
 
 export async function POST(req) {
   try {
@@ -8,26 +10,20 @@ export async function POST(req) {
       return Response.json({ success: false, message: "Email required" }, { status: 400 })
     }
 
-    const result = await client.execute({
-      sql: "SELECT * FROM nishant_users WHERE email = ?",
-      args: [email],
-    })
+    const result = await db.select().from(nishantUsers).where(eq(nishantUsers.email, email))
 
-    if (result.rows.length === 0) {
+    if (result.length === 0) {
       return Response.json({ success: false, status: "not_found" })
     }
 
-    const user = result.rows[0]
+    const user = result[0]
 
     if (user.status === "active") {
-      const expiry = new Date(user.expiry_date)
+      const expiry = new Date(user.expiryDate)
       const now = new Date()
 
       if (expiry < now) {
-        await client.execute({
-          sql: "UPDATE nishant_users SET status = 'expired' WHERE email = ?",
-          args: [email],
-        })
+        await db.update(nishantUsers).set({ status: "expired" }).where(eq(nishantUsers.email, email))
         return Response.json({ success: false, status: "expired" })
       }
 
@@ -36,15 +32,12 @@ export async function POST(req) {
     }
 
     if (user.status === "trial") {
-      const trialStart = new Date(user.trial_start)
+      const trialStart = new Date(user.trialStart)
       const now = new Date()
       const daysPassed = Math.floor((now - trialStart) / (1000 * 60 * 60 * 24))
 
       if (daysPassed >= 7) {
-        await client.execute({
-          sql: "UPDATE nishant_users SET status = 'expired' WHERE email = ?",
-          args: [email],
-        })
+        await db.update(nishantUsers).set({ status: "expired" }).where(eq(nishantUsers.email, email))
         return Response.json({ success: false, status: "expired" })
       }
 

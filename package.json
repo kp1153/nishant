@@ -12,7 +12,8 @@
     "lint": "eslint",
     "electron": "electron electron.js",
     "electron-dev": "node start-electron.js",
-    "electron-build": "next build && electron-builder"
+    "electron-build": "next build && electron-builder",
+    "db:push": "drizzle-kit push"
   },
   "build": {
     "appId": "com.nishant.hardware",

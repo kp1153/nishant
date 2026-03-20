@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
-import { client } from "@/db"
+import { db } from "@/db"
+import { nishantUsers } from "@/db/schema"
+import { eq, and, lte, gt } from "drizzle-orm"
 import { Resend } from "resend"
 
 export const dynamic = "force-dynamic"
@@ -17,27 +19,28 @@ export async function GET(req) {
     const in15Days = new Date()
     in15Days.setDate(in15Days.getDate() + 15)
 
-    const result = await client.execute({
-      sql: "SELECT * FROM nishant_users WHERE status = 'active' AND reminder_sent = 0 AND expiry_date <= ? AND expiry_date > ?",
-      args: [in15Days.toISOString(), now.toISOString()],
-    })
+    const result = await db.select().from(nishantUsers).where(
+      and(
+        eq(nishantUsers.status, "active"),
+        eq(nishantUsers.reminderSent, 0),
+        lte(nishantUsers.expiryDate, in15Days.toISOString()),
+        gt(nishantUsers.expiryDate, now.toISOString())
+      )
+    )
 
     let sent = 0
 
-    for (const user of result.rows) {
+    for (const user of result) {
       if (!user.email) continue
 
       await resend.emails.send({
         from: "Nishant Software <onboarding@resend.dev>",
         to: [user.email],
         subject: "निशांत सॉफ्टवेयर — Renewal reminder",
-        html: `<p>नमस्ते ${user.name || ""},</p><p>आपका निशांत सॉफ्टवेयर subscription <strong>${new Date(user.expiry_date).toDateString()}</strong> को expire होगा।</p><p>Renew करने के लिए यहाँ जाएं: <a href="https://nishant-ten.vercel.app/payment">Renew करें</a></p><p>धन्यवाद।</p>`,
+        html: `<p>नमस्ते ${user.name || ""},</p><p>आपका subscription <strong>${new Date(user.expiryDate).toDateString()}</strong> को expire होगा।</p><p><a href="https://www.web-developer-kp.com/payment?software=hardware&email=${encodeURIComponent(user.email)}">Renew करें</a></p>`,
       })
 
-      await client.execute({
-        sql: "UPDATE nishant_users SET reminder_sent = 1 WHERE email = ?",
-        args: [user.email],
-      })
+      await db.update(nishantUsers).set({ reminderSent: 1 }).where(eq(nishantUsers.email, user.email))
 
       sent++
     }
