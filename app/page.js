@@ -57,7 +57,7 @@ export default function Home() {
             href="/login"
             className="border-2 border-blue-600 text-blue-600 font-bold px-8 py-4 rounded-xl hover:bg-blue-50 transition text-lg"
           >
-            📱 Android / Web पर खोलें
+            📱 Android मोबाइल-टैबलेट पर इंस्टाल करें
           </Link>
         </div>
       </section>
