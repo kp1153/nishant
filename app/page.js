@@ -193,7 +193,7 @@ export default function Home() {
               <li>✅ Hosting + रखरखाव</li>
             </ul>
             <Link
-              href="/payment"
+              href="https://www.web-developer-kp.com/payment?software=hardware"
               className="block border-2 border-blue-600 text-blue-600 font-bold py-3 rounded-xl hover:bg-blue-50 transition"
             >
               Renew करें →
