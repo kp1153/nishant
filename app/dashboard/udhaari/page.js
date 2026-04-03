@@ -1,111 +1,117 @@
-﻿import { db } from "@/db"
-import { udhaari, grahak, dukaan } from "@/db/schema"
-import { eq, sql } from "drizzle-orm"
-import UdhaariChukao from "./UdhaariChukao"
+﻿"use client"
+import { useEffect, useState } from "react"
 
-export default async function UdhaariPage() {
-  const baaki = await db
-    .select()
-    .from(udhaari)
-    .leftJoin(grahak, eq(udhaari.grahakId, grahak.id))
-    .where(sql`${udhaari.rakam} > ${udhaari.chukaya}`)
+export default function UdhaariPage() {
+  const [list, setList] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [paying, setPaying] = useState(null)
+  const [rakam, setRakam] = useState("")
 
-  const [dukaanInfo] = await db.select().from(dukaan).limit(1)
+  useEffect(() => {
+    fetch("/api/udhaari")
+      .then(r => r.json())
+      .then(data => { setList(data); setLoading(false) })
+  }, [])
 
-  const kul = baaki.reduce((acc, r) => acc + r.udhaari.rakam - r.udhaari.chukaya, 0)
+  async function chukao(id, purana) {
+    const naya = parseFloat(rakam)
+    if (!naya || naya <= 0) return alert("सही रकम डालें")
+    const res = await fetch("/api/udhaari", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, chukaya: purana + naya }),
+    })
+    if (res.ok) {
+      const updated = await res.json()
+      setList(list.map(row => row.udhaari.id === id ? { ...row, udhaari: updated } : row))
+      setPaying(null)
+      setRakam("")
+    }
+  }
+
+  if (loading) return <div className="text-center py-16 text-gray-400">लोड हो रहा है...</div>
+
+  const baaki = list.filter(row => row.udhaari.rakam - row.udhaari.chukaya > 0.01)
+  const chuka = list.filter(row => row.udhaari.rakam - row.udhaari.chukaya <= 0.01)
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-blue-50">💳 उधारी</h1>
+      <h1 className="text-xl font-bold text-blue-700">💰 उधार बही</h1>
 
-      <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-4 inline-block">
-        <div className="text-sm text-red-600">कुल बकाया</div>
-        <div className="text-3xl font-bold text-red-700">₹{kul.toLocaleString("hi-IN")}</div>
-      </div>
+      {baaki.length === 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 px-5 py-8 text-center text-gray-400 text-sm">कोई बाकी उधार नहीं</div>
+      )}
 
-      <div className="space-y-3 lg:hidden">
-        {baaki.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 px-5 py-8 text-center text-gray-400 text-sm">कोई उधारी बाकी नहीं</div>
-        ) : baaki.map((row) => {
-          const baki = row.udhaari.rakam - row.udhaari.chukaya
-          const pct = Math.min((row.udhaari.chukaya / row.udhaari.rakam) * 100, 100)
+      <div className="space-y-3">
+        {baaki.map((row) => {
+          const baki = (row.udhaari.rakam - row.udhaari.chukaya).toFixed(2)
           return (
             <div key={row.udhaari.id} className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="font-semibold text-blue-50">{row.grahak?.naam ?? "—"}</div>
-                  <div className="text-xs text-gray-400 mt-0.5">{row.grahak?.mobile ?? "—"}</div>
+                  <div className="font-bold text-gray-800">{row.grahak?.naam ?? "—"}</div>
+                  <div className="text-xs text-gray-400">{row.grahak?.mobile}</div>
+                  <div className="text-xs text-gray-400 mt-0.5">बिल: {row.bill?.billNumber} · {row.udhaari.banaya?.slice(0, 10)}</div>
                 </div>
                 <div className="text-right">
-                  <div className="font-bold text-red-600">₹{baki}</div>
-                  <div className="text-xs text-gray-400">बाकी</div>
+                  <div className="text-xs text-gray-400">कुल उधार</div>
+                  <div className="font-semibold text-gray-700">₹{row.udhaari.rakam}</div>
+                  <div className="text-xs text-green-600 mt-0.5">चुकाया: ₹{row.udhaari.chukaya}</div>
+                  <div className="font-bold text-red-600 text-lg">बाकी: ₹{baki}</div>
                 </div>
               </div>
-              <div className="mt-3 flex justify-between text-xs text-gray-500 mb-1">
-                <span>चुकाया: ₹{row.udhaari.chukaya}</span>
-                <span>कुल: ₹{row.udhaari.rakam}</span>
-              </div>
-              <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-3">
-                <div className="h-1.5 rounded-full bg-green-500" style={{ width: `${pct}%` }} />
-              </div>
-              <UdhaariChukao
-                id={row.udhaari.id}
-                baki={baki}
-                grahakNaam={row.grahak?.naam}
-                grahakMobile={row.grahak?.mobile}
-                dukaanNaam={dukaanInfo?.naam}
-              />
+
+              {paying === row.udhaari.id ? (
+                <div className="mt-3 flex gap-2">
+                  <input
+                    type="number"
+                    placeholder="रकम डालें"
+                    value={rakam}
+                    onChange={e => setRakam(e.target.value)}
+                    className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-700 text-gray-800"
+                  />
+                  <button
+                    onClick={() => chukao(row.udhaari.id, row.udhaari.chukaya)}
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700"
+                  >
+                    जमा
+                  </button>
+                  <button
+                    onClick={() => { setPaying(null); setRakam("") }}
+                    className="bg-gray-100 text-gray-600 px-3 py-2 rounded-lg text-sm font-semibold"
+                  >
+                    रद्द
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => { setPaying(row.udhaari.id); setRakam("") }}
+                  className="mt-3 w-full bg-blue-700 text-white py-2 rounded-lg text-sm font-semibold hover:bg-blue-800"
+                >
+                  ✓ रकम चुकाएं
+                </button>
+              )}
             </div>
           )
         })}
       </div>
 
-      <div className="hidden lg:block bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50 text-xs text-gray-500 uppercase">
-            <tr>
-              <th className="px-5 py-3 text-left">ग्राहक</th>
-              <th className="px-5 py-3 text-left">मोबाइल</th>
-              <th className="px-5 py-3 text-right">कुल रकम</th>
-              <th className="px-5 py-3 text-right">चुकाया</th>
-              <th className="px-5 py-3 text-right">बाकी</th>
-              <th className="px-5 py-3 text-left">प्रगति</th>
-              <th className="px-5 py-3 text-center">कार्रवाई</th>
-            </tr>
-          </thead>
-          <tbody>
-            {baaki.length === 0 ? (
-              <tr><td colSpan={7} className="px-5 py-8 text-center text-gray-400">कोई उधारी बाकी नहीं</td></tr>
-            ) : baaki.map((row) => {
-              const baki = row.udhaari.rakam - row.udhaari.chukaya
-              const pct = Math.min((row.udhaari.chukaya / row.udhaari.rakam) * 100, 100)
-              return (
-                <tr key={row.udhaari.id} className="border-t border-gray-50 hover:bg-gray-50">
-                  <td className="px-5 py-3 font-semibold">{row.grahak?.naam ?? "—"}</td>
-                  <td className="px-5 py-3">{row.grahak?.mobile ?? "—"}</td>
-                  <td className="px-5 py-3 text-right">₹{row.udhaari.rakam}</td>
-                  <td className="px-5 py-3 text-right text-green-700">₹{row.udhaari.chukaya}</td>
-                  <td className="px-5 py-3 text-right font-bold text-red-600">₹{baki}</td>
-                  <td className="px-5 py-3">
-                    <div className="w-24 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-1.5 rounded-full bg-green-500" style={{ width: `${pct}%` }} />
-                    </div>
-                  </td>
-                  <td className="px-5 py-3 text-center">
-                    <UdhaariChukao
-                      id={row.udhaari.id}
-                      baki={baki}
-                      grahakNaam={row.grahak?.naam}
-                      grahakMobile={row.grahak?.mobile}
-                      dukaanNaam={dukaanInfo?.naam}
-                    />
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
+      {chuka.length > 0 && (
+        <div>
+          <div className="text-sm font-semibold text-gray-400 mb-2">✅ चुकाए गए उधार</div>
+          <div className="space-y-2">
+            {chuka.map((row) => (
+              <div key={row.udhaari.id} className="bg-gray-50 rounded-xl border border-gray-100 p-3 flex justify-between items-center">
+                <div>
+                  <div className="font-semibold text-gray-600 text-sm">{row.grahak?.naam ?? "—"}</div>
+                  <div className="text-xs text-gray-400">{row.udhaari.banaya?.slice(0, 10)}</div>
+                </div>
+                <div className="text-sm font-bold text-green-600">₹{row.udhaari.rakam} ✓</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -26,15 +26,15 @@ export default function GrahakForm() {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-5 space-y-3 max-w-lg">
-      <div className="font-bold text-blue-50">नया ग्राहक जोड़ें</div>
+      <div className="font-bold text-blue-700">नया ग्राहक जोड़ें</div>
       {msg && <p className="text-sm text-blue-600">{msg}</p>}
-      <input className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-blue-50"
+      <input className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-blue-700 text-gray-800"
         placeholder="नाम *" value={form.naam} onChange={e => setForm({ ...form, naam: e.target.value })} />
-      <input className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-blue-50"
+      <input className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-blue-700 text-gray-800"
         placeholder="मोबाइल *" value={form.mobile} onChange={e => setForm({ ...form, mobile: e.target.value })} />
-      <input className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-blue-50"
+      <input className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-blue-700 text-gray-800"
         placeholder="पता" value={form.pata} onChange={e => setForm({ ...form, pata: e.target.value })} />
-      <button type="submit" className="bg-blue-50 text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#1a3f7a]">
+      <button type="submit" className="bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-800">
         जोड़ें
       </button>
     </form>

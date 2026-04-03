@@ -1,61 +1,65 @@
 "use client"
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import Sidebar from "@/components/Sidebar"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
-const OFFLINE_TTL = 72 * 60 * 60 * 1000
+const navLinks = [
+  { href: "/dashboard/bill/new", label: "नया बिल", icon: "🧾" },
+  { href: "/dashboard/bill", label: "बिल सूची", icon: "📋" },
+  { href: "/dashboard/grahak", label: "ग्राहक", icon: "👥" },
+  { href: "/dashboard/samaan", label: "सामान", icon: "📦" },
+  { href: "/dashboard/udhaari", label: "उधार", icon: "💰" },
+  { href: "/dashboard/gst", label: "GST", icon: "📄" },
+]
 
 export default function DashboardLayout({ children }) {
-  const router = useRouter()
-  const [allowed, setAllowed] = useState(false)
-  const [checked, setChecked] = useState(false)
-
-  useEffect(() => {
-    const lastVerified = localStorage.getItem("last_verified")
-    if (lastVerified && Date.now() - parseInt(lastVerified) < OFFLINE_TTL) {
-      setAllowed(true)
-      setChecked(true)
-      return
-    }
-
-    fetch("/api/auth/me")
-      .then(r => r.json())
-      .then(data => {
-        if (data.ok) {
-          if (data.user.status === "expired") {
-            localStorage.removeItem("last_verified")
-            router.push("/payment")
-          } else {
-            localStorage.setItem("last_verified", Date.now().toString())
-            setAllowed(true)
-          }
-        } else {
-          router.push("/login")
-        }
-        setChecked(true)
-      })
-      .catch(() => {
-        router.push("/login")
-        setChecked(true)
-      })
-  }, [router])
-
-  if (!checked) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">लोड हो रहा है...</p>
-      </div>
-    )
-  }
-
-  if (!allowed) return null
+  const pathname = usePathname()
 
   return (
-    <div className="flex min-h-screen bg-white">
-      <Sidebar />
-      <main className="w-full md:ml-64 flex-1 p-4 pt-16 pb-24 md:pt-6 md:pb-6">
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-blue-700 text-white px-4 py-3 flex items-center justify-between sticky top-0 z-10">
+        <div className="font-bold text-lg">🏪 दुकान</div>
+        <Link href="/dashboard/settings" className="text-blue-200 text-sm">⚙️</Link>
+      </header>
+
+      <nav className="hidden lg:flex bg-white border-b border-gray-200 px-4 gap-1">
+        {navLinks.map((l) => (
+          <Link
+            key={l.href}
+            href={l.href}
+            className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-colors ${
+              pathname === l.href
+                ? "border-blue-700 text-blue-700"
+                : "border-transparent text-gray-500 hover:text-gray-800"
+            }`}
+          >
+            <span>{l.icon}</span>
+            <span>{l.label}</span>
+          </Link>
+        ))}
+      </nav>
+
+      <main className="px-4 py-5 pb-24 lg:pb-8 max-w-5xl mx-auto">
         {children}
       </main>
+
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">
+        <div className="grid grid-cols-6">
+          {navLinks.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className={`flex flex-col items-center justify-center py-2 gap-0.5 text-xs font-semibold transition-colors ${
+                pathname === l.href
+                  ? "text-blue-700"
+                  : "text-gray-400"
+              }`}
+            >
+              <span className="text-xl leading-none">{l.icon}</span>
+              <span className="text-[10px]">{l.label}</span>
+            </Link>
+          ))}
+        </div>
+      </nav>
     </div>
   )
 }

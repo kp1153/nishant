@@ -19,9 +19,8 @@ export default async function BillByoraPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-blue-50">📋 बिल ब्यौरा</h1>
+      <h1 className="text-xl font-bold text-blue-700">📋 बिल ब्यौरा</h1>
 
-      {/* मोबाइल कार्ड */}
       <div className="space-y-3 lg:hidden">
         {sabhiBill.length === 0 ? (
           <div className="bg-white rounded-xl border border-gray-200 px-5 py-8 text-center text-gray-400 text-sm">कोई बिल नहीं</div>
@@ -29,8 +28,8 @@ export default async function BillByoraPage() {
           <div key={row.bill.id} className="bg-white rounded-xl border border-gray-200 p-4">
             <div className="flex justify-between items-start">
               <div>
-                <div className="text-xs font-bold text-blue-50">{row.bill.billNumber}</div>
-                <div className="font-semibold mt-0.5">{row.grahak?.naam ?? "—"}</div>
+                <div className="text-xs font-bold text-blue-700">{row.bill.billNumber}</div>
+                <div className="font-semibold mt-0.5 text-gray-800">{row.grahak?.naam ?? "—"}</div>
                 <div className="text-xs text-gray-400 mt-0.5">{row.bill.banaya?.slice(0, 10)}</div>
               </div>
               <div className="text-right">
@@ -42,14 +41,13 @@ export default async function BillByoraPage() {
               </div>
             </div>
             <Link href={`/dashboard/bill/${row.bill.id}`}
-              className="mt-3 w-full block text-center bg-blue-50 text-white py-2 rounded-lg text-xs font-semibold">
+              className="mt-3 w-full block text-center bg-blue-700 text-white py-2 rounded-lg text-xs font-semibold">
               🖨️ प्रिंट करें
             </Link>
           </div>
         ))}
       </div>
 
-      {/* डेस्कटॉप टेबल */}
       <div className="hidden lg:block bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-xs text-gray-500 uppercase">
@@ -69,9 +67,9 @@ export default async function BillByoraPage() {
               <tr><td colSpan={8} className="px-5 py-8 text-center text-gray-400">कोई बिल नहीं</td></tr>
             ) : sabhiBill.map((row) => (
               <tr key={row.bill.id} className="border-t border-gray-50 hover:bg-gray-50">
-                <td className="px-5 py-3 font-bold text-blue-50">{row.bill.billNumber}</td>
-                <td className="px-5 py-3">{row.grahak?.naam ?? "—"}</td>
-                <td className="px-5 py-3 text-right">₹{row.bill.mulyaBeforeGst ?? 0}</td>
+                <td className="px-5 py-3 font-bold text-blue-700">{row.bill.billNumber}</td>
+                <td className="px-5 py-3 text-gray-800">{row.grahak?.naam ?? "—"}</td>
+                <td className="px-5 py-3 text-right text-gray-700">₹{row.bill.mulyaBeforeGst ?? 0}</td>
                 <td className="px-5 py-3 text-right text-orange-600 font-semibold">₹{row.bill.gstRakam ?? 0}</td>
                 <td className="px-5 py-3 text-right font-bold text-green-700">₹{row.bill.kulRakam}</td>
                 <td className="px-5 py-3">
@@ -82,7 +80,7 @@ export default async function BillByoraPage() {
                 <td className="px-5 py-3 text-gray-500">{row.bill.banaya?.slice(0, 10)}</td>
                 <td className="px-5 py-3 text-center">
                   <Link href={`/dashboard/bill/${row.bill.id}`}
-                    className="text-xs font-semibold text-blue-50 hover:underline">
+                    className="text-xs font-semibold text-blue-700 hover:underline">
                     🖨️ प्रिंट
                   </Link>
                 </td>

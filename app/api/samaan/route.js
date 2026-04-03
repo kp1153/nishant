@@ -17,7 +17,7 @@ export async function POST(req) {
     bikriMulya: parseFloat(bikriMulya),
     matra: parseInt(matra) || 0,
     hsnCode: hsnCode || null,
-    gstDar: parseFloat(gstDar) ?? 18,
+    gstDar: parseFloat(gstDar) || 18,
   }).returning()
   return NextResponse.json(newSamaan)
 }
@@ -31,7 +31,7 @@ export async function PATCH(req) {
     bikriMulya: parseFloat(bikriMulya),
     matra: parseInt(matra) || 0,
     hsnCode: hsnCode || null,
-    gstDar: parseFloat(gstDar) ?? 18,
+    gstDar: parseFloat(gstDar) || 18,
   }).where(eq(samaan.id, id)).returning()
   return NextResponse.json(updated)
 }

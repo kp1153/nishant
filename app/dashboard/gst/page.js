@@ -1,6 +1,6 @@
 ﻿import { db } from "@/db"
-import { bill, billItem, samaan } from "@/db/schema"
-import { sql, eq } from "drizzle-orm"
+import { bill } from "@/db/schema"
+import { sql } from "drizzle-orm"
 
 export default async function GSTPage() {
   const mahwari = await db
@@ -17,9 +17,8 @@ export default async function GSTPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-blue-50">📄 GST रिपोर्ट</h1>
+      <h1 className="text-xl font-bold text-blue-700">📄 GST रिपोर्ट</h1>
 
-      {/* मोबाइल कार्ड */}
       <div className="space-y-3 lg:hidden">
         {mahwari.length === 0 ? (
           <div className="bg-white rounded-xl border border-gray-200 px-5 py-8 text-center text-gray-400 text-sm">कोई डेटा नहीं</div>
@@ -30,8 +29,8 @@ export default async function GSTPage() {
           return (
             <div key={row.mahina} className="bg-white rounded-xl border border-gray-200 p-4 space-y-2">
               <div className="flex justify-between items-center">
-                <span className="font-bold text-blue-50">{row.mahina}</span>
-                <span className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full font-semibold">{row.bilSankhya} बिल</span>
+                <span className="font-bold text-blue-700">{row.mahina}</span>
+                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold">{row.bilSankhya} बिल</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">कुल बिक्री</span>
@@ -39,7 +38,7 @@ export default async function GSTPage() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">GST से पहले</span>
-                <span className="font-semibold">₹{Number(row.mulyaBeforeGst).toLocaleString("hi-IN")}</span>
+                <span className="font-semibold text-gray-800">₹{Number(row.mulyaBeforeGst).toLocaleString("hi-IN")}</span>
               </div>
               <div className="border-t border-gray-100 pt-2 grid grid-cols-3 gap-2 text-center">
                 <div>
@@ -60,7 +59,6 @@ export default async function GSTPage() {
         })}
       </div>
 
-      {/* डेस्कटॉप टेबल */}
       <div className="hidden lg:block bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-xs text-gray-500 uppercase">
@@ -81,9 +79,9 @@ export default async function GSTPage() {
               const gst = Number(row.kulGst ?? 0)
               return (
                 <tr key={row.mahina} className="border-t border-gray-50 hover:bg-gray-50">
-                  <td className="px-5 py-3 font-semibold">{row.mahina}</td>
-                  <td className="px-5 py-3 text-right">{row.bilSankhya}</td>
-                  <td className="px-5 py-3 text-right">₹{Number(row.mulyaBeforeGst).toLocaleString("hi-IN")}</td>
+                  <td className="px-5 py-3 font-semibold text-gray-800">{row.mahina}</td>
+                  <td className="px-5 py-3 text-right text-gray-700">{row.bilSankhya}</td>
+                  <td className="px-5 py-3 text-right text-gray-700">₹{Number(row.mulyaBeforeGst).toLocaleString("hi-IN")}</td>
                   <td className="px-5 py-3 text-right text-orange-600">₹{(gst / 2).toFixed(2)}</td>
                   <td className="px-5 py-3 text-right text-orange-600">₹{(gst / 2).toFixed(2)}</td>
                   <td className="px-5 py-3 text-right font-bold text-blue-700">₹{gst.toFixed(2)}</td>
