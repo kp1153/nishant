@@ -29,37 +29,50 @@ export default function UdhaariPage() {
     }
   }
 
-  if (loading) return <div className="text-center py-16 text-gray-400">लोड हो रहा है...</div>
+  if (loading) return <div className="text-center py-16 text-gray-400 text-lg">लोड हो रहा है...</div>
 
   const baaki = list.filter(row => row.udhaari.rakam - row.udhaari.chukaya > 0.01)
   const chuka = list.filter(row => row.udhaari.rakam - row.udhaari.chukaya <= 0.01)
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-blue-700">💰 उधार बही</h1>
+      <h1 className="text-2xl font-extrabold text-blue-700">💰 उधार बही</h1>
 
       {baaki.length === 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 px-5 py-8 text-center text-gray-400 text-sm">कोई बाकी उधार नहीं</div>
+        <div className="bg-white rounded-xl border border-gray-200 px-5 py-8 text-center text-gray-400 text-base">कोई बाकी उधार नहीं</div>
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {baaki.map((row) => {
           const baki = (row.udhaari.rakam - row.udhaari.chukaya).toFixed(2)
+          const mobile = row.grahak?.mobile
+          const waMsg = `नमस्ते ${row.grahak?.naam}, आपका ₹${baki} बाकी है। कृपया जल्द चुकाएं।`
           return (
-            <div key={row.udhaari.id} className="bg-white rounded-xl border border-gray-200 p-4">
+            <div key={row.udhaari.id} className="bg-white rounded-xl border border-gray-200 p-5">
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="font-bold text-gray-800">{row.grahak?.naam ?? "—"}</div>
-                  <div className="text-xs text-gray-400">{row.grahak?.mobile}</div>
-                  <div className="text-xs text-gray-400 mt-0.5">बिल: {row.bill?.billNumber} · {row.udhaari.banaya?.slice(0, 10)}</div>
+                  <div className="font-extrabold text-gray-900 text-xl">{row.grahak?.naam ?? "—"}</div>
+                  <div className="text-base text-gray-500 mt-0.5">{mobile}</div>
+                  <div className="text-sm text-gray-400 mt-0.5">बिल: {row.bill?.billNumber} · {row.udhaari.banaya?.slice(0, 10)}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-xs text-gray-400">कुल उधार</div>
-                  <div className="font-semibold text-gray-700">₹{row.udhaari.rakam}</div>
-                  <div className="text-xs text-green-600 mt-0.5">चुकाया: ₹{row.udhaari.chukaya}</div>
-                  <div className="font-bold text-red-600 text-lg">बाकी: ₹{baki}</div>
+                  <div className="text-sm text-gray-400">कुल उधार</div>
+                  <div className="font-semibold text-gray-700 text-base">₹{row.udhaari.rakam}</div>
+                  <div className="text-sm text-green-600 mt-0.5">चुकाया: ₹{row.udhaari.chukaya}</div>
+                  <div className="font-extrabold text-red-600 text-2xl mt-1">₹{baki}</div>
                 </div>
               </div>
+
+              {mobile && (
+                <a
+                  href={`https://wa.me/91${mobile}?text=${encodeURIComponent(waMsg)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 w-full flex items-center justify-center gap-2 bg-green-500 text-white py-3 rounded-xl font-bold text-base hover:bg-green-600 transition"
+                >
+                  📲 WhatsApp से याद दिलाएं
+                </a>
+              )}
 
               {paying === row.udhaari.id ? (
                 <div className="mt-3 flex gap-2">
@@ -68,17 +81,17 @@ export default function UdhaariPage() {
                     placeholder="रकम डालें"
                     value={rakam}
                     onChange={e => setRakam(e.target.value)}
-                    className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-700 text-gray-800"
+                    className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-700 text-gray-800"
                   />
                   <button
                     onClick={() => chukao(row.udhaari.id, row.udhaari.chukaya)}
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700"
+                    className="bg-green-600 text-white px-5 py-3 rounded-xl text-base font-bold hover:bg-green-700"
                   >
                     जमा
                   </button>
                   <button
                     onClick={() => { setPaying(null); setRakam("") }}
-                    className="bg-gray-100 text-gray-600 px-3 py-2 rounded-lg text-sm font-semibold"
+                    className="bg-gray-100 text-gray-600 px-4 py-3 rounded-xl text-base font-semibold"
                   >
                     रद्द
                   </button>
@@ -86,7 +99,7 @@ export default function UdhaariPage() {
               ) : (
                 <button
                   onClick={() => { setPaying(row.udhaari.id); setRakam("") }}
-                  className="mt-3 w-full bg-blue-700 text-white py-2 rounded-lg text-sm font-semibold hover:bg-blue-800"
+                  className="mt-3 w-full bg-blue-700 text-white py-3 rounded-xl text-base font-bold hover:bg-blue-800"
                 >
                   ✓ रकम चुकाएं
                 </button>
@@ -98,15 +111,15 @@ export default function UdhaariPage() {
 
       {chuka.length > 0 && (
         <div>
-          <div className="text-sm font-semibold text-gray-400 mb-2">✅ चुकाए गए उधार</div>
+          <div className="text-base font-semibold text-gray-400 mb-2">✅ चुकाए गए उधार</div>
           <div className="space-y-2">
             {chuka.map((row) => (
-              <div key={row.udhaari.id} className="bg-gray-50 rounded-xl border border-gray-100 p-3 flex justify-between items-center">
+              <div key={row.udhaari.id} className="bg-gray-50 rounded-xl border border-gray-100 p-4 flex justify-between items-center">
                 <div>
-                  <div className="font-semibold text-gray-600 text-sm">{row.grahak?.naam ?? "—"}</div>
-                  <div className="text-xs text-gray-400">{row.udhaari.banaya?.slice(0, 10)}</div>
+                  <div className="font-bold text-gray-700 text-base">{row.grahak?.naam ?? "—"}</div>
+                  <div className="text-sm text-gray-400">{row.udhaari.banaya?.slice(0, 10)}</div>
                 </div>
-                <div className="text-sm font-bold text-green-600">₹{row.udhaari.rakam} ✓</div>
+                <div className="text-base font-extrabold text-green-600">₹{row.udhaari.rakam} ✓</div>
               </div>
             ))}
           </div>

@@ -1,4 +1,4 @@
-"use client"
+ "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -48,14 +48,14 @@ export default function DashboardLayout({ children }) {
             <Link
               key={l.href}
               href={l.href}
-              className={`flex flex-col items-center justify-center py-2 gap-0.5 text-xs font-semibold transition-colors ${
+              className={`flex flex-col items-center justify-center py-2 gap-0.5 transition-colors ${
                 pathname === l.href
                   ? "text-blue-700"
                   : "text-gray-400"
               }`}
             >
-              <span className="text-xl leading-none">{l.icon}</span>
-              <span className="text-[10px]">{l.label}</span>
+              <span className="text-2xl leading-none">{l.icon}</span>
+              <span className="text-xs font-semibold">{l.label}</span>
             </Link>
           ))}
         </div>
