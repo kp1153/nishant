@@ -24,6 +24,7 @@ export default async function UdhaariList() {
           baaki.map((row) => {
             const baki = row.udhaari.rakam - row.udhaari.chukaya
             const mobile = row.grahak?.mobile
+const waMsg = `नमस्ते ${row.grahak?.naam}, आपका ₹${baki} बाकी है। कृपया जल्द चुकाएं।`
             return (
               <div key={row.udhaari.id} className="flex items-center gap-3 px-5 py-4 border-b border-gray-50">
                 <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-base font-extrabold flex-shrink-0">
@@ -34,8 +35,8 @@ export default async function UdhaariList() {
                   <div className="text-sm text-red-600 font-bold mt-0.5">बाकी: ₹{baki}</div>
                 </div>
                 {mobile && (
-                  
-                    href={`https://wa.me/91${mobile}?text=${encodeURIComponent(`नमस्ते ${row.grahak?.naam}, आपका ₹${baki} बाकी है। कृपया जल्द चुकाएं।`)}`}
+                  <a
+                    href={`https://wa.me/91${mobile}?text=${encodeURIComponent(waMsg)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-shrink-0 bg-green-500 text-white text-xs font-bold px-3 py-2 rounded-xl"
