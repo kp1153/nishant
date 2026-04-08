@@ -3,7 +3,8 @@ export default function manifest() {
     name: "निशांत हार्डवेयर",
     short_name: "निशांत",
     description: "हार्डवेयर दुकान — बिल, स्टॉक, उधारी, GST",
-    start_url: "/dashboard",
+    start_url: "https://hardware.nishantsoftwares.in/dashboard",
+    scope: "https://hardware.nishantsoftwares.in/",
     display: "standalone",
     background_color: "#1e3a8a",
     theme_color: "#1d4ed8",
@@ -33,5 +34,5 @@ export default function manifest() {
         url: "/dashboard/udhaari",
       },
     ],
-  }
+  };
 }
