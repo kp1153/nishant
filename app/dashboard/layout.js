@@ -1,6 +1,6 @@
- "use client"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+"use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const navLinks = [
   { href: "/dashboard/bill/new", label: "नया बिल", icon: "🧾" },
@@ -9,16 +9,22 @@ const navLinks = [
   { href: "/dashboard/samaan", label: "सामान", icon: "📦" },
   { href: "/dashboard/udhaari", label: "उधार", icon: "💰" },
   { href: "/dashboard/gst", label: "GST", icon: "📄" },
-]
+];
 
 export default function DashboardLayout({ children }) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-blue-700 text-white px-4 py-3 flex items-center justify-between sticky top-0 z-10">
         <div className="font-bold text-lg">🏪 दुकान</div>
-        <Link href="/dashboard/settings" className="text-blue-200 text-sm">⚙️</Link>
+        <Link
+          href="/dashboard/settings"
+          className="text-blue-200 text-lg flex items-center gap-1"
+        >
+          <span className="text-2xl">⚙️</span>
+          <span className="text-sm font-bold">सेटिंग्स</span>
+        </Link>
       </header>
 
       <nav className="hidden lg:flex bg-white border-b border-gray-200 px-4 gap-1">
@@ -49,9 +55,7 @@ export default function DashboardLayout({ children }) {
               key={l.href}
               href={l.href}
               className={`flex flex-col items-center justify-center py-2 gap-0.5 transition-colors ${
-                pathname === l.href
-                  ? "text-blue-700"
-                  : "text-gray-400"
+                pathname === l.href ? "text-blue-700" : "text-gray-400"
               }`}
             >
               <span className="text-2xl leading-none">{l.icon}</span>
@@ -61,5 +65,5 @@ export default function DashboardLayout({ children }) {
         </div>
       </nav>
     </div>
-  )
+  );
 }
