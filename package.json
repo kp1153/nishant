@@ -22,8 +22,6 @@
       "output": "dist"
     },
     "files": [
-      ".next/**/*",
-      "node_modules/**/*",
       "electron.js",
       "package.json",
       "public/**/*"
