@@ -36,6 +36,7 @@ export const bill = sqliteTable("bill", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   billNumber: text("bill_number").notNull().unique(),
   grahakId: integer("grahak_id").references(() => grahak.id),
+  grahakNaam: text("grahak_naam"),
   kulRakam: real("kul_rakam").notNull(),
   gstRakam: real("gst_rakam").notNull().default(0),
   mulyaBeforeGst: real("mulya_before_gst").notNull().default(0),
