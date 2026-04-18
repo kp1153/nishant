@@ -1,13 +1,32 @@
-import { redirect } from "next/navigation"
+import { google } from "@/lib/google.js";
+import { generateCodeVerifier, generateState } from "arctic";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 export async function GET() {
-  const params = new URLSearchParams({
-    client_id: process.env.GOOGLE_CLIENT_ID,
-    redirect_uri: `${process.env.NEXT_PUBLIC_URL}/api/auth/callback/google`,
-    response_type: "code",
-    scope: "openid email profile",
-    access_type: "offline",
-    prompt: "consent",
-  })
-  return redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`)
+  const state = generateState();
+  const codeVerifier = generateCodeVerifier();
+  const url = google.createAuthorizationURL(state, codeVerifier, [
+    "openid",
+    "email",
+    "profile",
+  ]);
+
+  const cookieStore = await cookies();
+  cookieStore.set("google_state", state, {
+    httpOnly: true,
+    maxAge: 600,
+    path: "/",
+    sameSite: "lax",
+    secure: true,
+  });
+  cookieStore.set("google_code_verifier", codeVerifier, {
+    httpOnly: true,
+    maxAge: 600,
+    path: "/",
+    sameSite: "lax",
+    secure: true,
+  });
+
+  return NextResponse.redirect(url);
 }

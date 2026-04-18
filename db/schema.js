@@ -74,6 +74,7 @@ export const nishantUsers = sqliteTable("nishant_users", {
   expiryDate: text("expiry_date"),
   status: text("status").notNull().default("trial"),
   reminderSent: integer("reminder_sent").default(0),
+  active: integer("active").notNull().default(0),
 });
 export const views = sqliteTable("views", {
   id: integer("id").primaryKey({ autoIncrement: true }),
