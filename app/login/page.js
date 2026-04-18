@@ -14,7 +14,7 @@
           </p>
         )}
 
-        
+        <a
           href="/api/auth/google"
           className="w-full flex items-center justify-center gap-3 bg-blue-600 text-white py-3 px-6 rounded-2xl font-semibold text-base hover:bg-blue-700 active:scale-95 transition"
         >
