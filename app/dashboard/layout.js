@@ -2,16 +2,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
-  FileText,
-  Receipt,
-  Users,
-  Package,
-  Wallet,
-  FilePlus2,
-  Settings,
-  LogOut,
-  Store,
+  LayoutDashboard, FileText, Receipt, Users, Package,
+  Wallet, FilePlus2, Settings, LogOut, Store,
 } from "lucide-react";
 
 const navLinks = [
@@ -34,12 +26,8 @@ export default function DashboardLayout({ children }) {
             <Store className="w-5 h-5" strokeWidth={2.5} />
           </div>
           <div>
-            <div className="font-extrabold text-base leading-tight">
-              निशांत हार्डवेयर
-            </div>
-            <div className="text-[10px] text-blue-100 leading-tight">
-              दुकान प्रबंधन
-            </div>
+            <div className="font-extrabold text-base leading-tight">निशांत हार्डवेयर</div>
+            <div className="text-[10px] text-blue-100 leading-tight">दुकान प्रबंधन</div>
           </div>
         </Link>
         <div className="flex items-center gap-2">
@@ -52,7 +40,7 @@ export default function DashboardLayout({ children }) {
           </Link>
           <a
             href="/api/auth/logout"
-            className="w-10 h-10 rounded-xl bg-red-500/90 hover:bg-red-500 flex items-center justify-center transition shadow-md"
+            className="hidden sm:flex w-10 h-10 rounded-xl bg-red-500/90 hover:bg-red-500 items-center justify-center transition shadow-md"
             aria-label="लॉगआउट"
           >
             <LogOut className="w-5 h-5" strokeWidth={2.2} />
@@ -86,14 +74,19 @@ export default function DashboardLayout({ children }) {
             <span>{label}</span>
           </Link>
         ))}
+        <a
+          href="/api/auth/logout"
+          className="ml-auto flex items-center gap-2 px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 transition"
+        >
+          <LogOut className="w-4 h-4" />
+          <span>लॉगआउट</span>
+        </a>
       </nav>
 
-      <main className="px-4 py-5 pb-24 lg:pb-8 max-w-6xl mx-auto">
-        {children}
-      </main>
+      <main className="px-4 py-5 pb-24 lg:pb-8 max-w-6xl mx-auto">{children}</main>
 
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] z-20">
-        <div className="grid grid-cols-6">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white shadow-[0_-4px_20px_rgba(0,0,0,0.15)] z-20">
+        <div className="grid grid-cols-7">
           {navLinks.map(({ href, label, Icon }) => {
             const active = pathname === href;
             return (
@@ -101,17 +94,24 @@ export default function DashboardLayout({ children }) {
                 key={href}
                 href={href}
                 className={`flex flex-col items-center justify-center py-2.5 gap-1 transition-colors relative ${
-                  active ? "text-blue-700" : "text-slate-500"
+                  active ? "text-white bg-white/15" : "text-blue-100"
                 }`}
               >
                 {active && (
-                  <span className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-1 bg-blue-700 rounded-b-full" />
+                  <span className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-1 bg-amber-400 rounded-b-full" />
                 )}
                 <Icon className="w-5 h-5" strokeWidth={active ? 2.5 : 2} />
                 <span className="text-[10px] font-semibold">{label}</span>
               </Link>
             );
           })}
+          <a
+            href="/api/auth/logout"
+            className="flex flex-col items-center justify-center py-2.5 gap-1 text-red-200 hover:bg-red-500/20 transition"
+          >
+            <LogOut className="w-5 h-5" strokeWidth={2} />
+            <span className="text-[10px] font-semibold">लॉगआउट</span>
+          </a>
         </div>
       </nav>
     </div>
