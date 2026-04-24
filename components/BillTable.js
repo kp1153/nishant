@@ -1,13 +1,15 @@
-﻿import { db } from "@/db"
-import { bill, grahak } from "@/db/schema"
-import { desc, eq } from "drizzle-orm"
+﻿import { db } from "@/db";
+import { bill, grahak } from "@/db/schema";
+import { desc, eq } from "drizzle-orm";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 const chip = {
-  "नकद":    "bg-green-100 text-green-700",
-  "UPI":    "bg-blue-100 text-blue-700",
-  "उधार":   "bg-amber-100 text-amber-700",
-  "आंशिक": "bg-purple-100 text-purple-700",
-}
+  "नकद":    "bg-green-50 text-green-700 border-green-200",
+  "UPI":    "bg-blue-50 text-blue-700 border-blue-200",
+  "उधार":   "bg-amber-50 text-amber-700 border-amber-200",
+  "आंशिक": "bg-purple-50 text-purple-700 border-purple-200",
+};
 
 export default async function BillTable() {
   const aajKeBill = await db
@@ -15,72 +17,62 @@ export default async function BillTable() {
     .from(bill)
     .leftJoin(grahak, eq(bill.grahakId, grahak.id))
     .orderBy(desc(bill.banaya))
-    .limit(10)
+    .limit(10);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-        <span className="font-bold text-blue-50">🧾 आज के बिल</span>
-        <button className="text-xs font-semibold text-[#1a3f7a]">सभी देखें →</button>
+    <div>
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-xs text-slate-500 font-semibold">हाल के 10 बिल</span>
+        <Link href="/dashboard/bill" className="flex items-center gap-1 text-xs font-bold text-blue-700 hover:underline">
+          सभी देखें <ArrowRight className="w-3 h-3" />
+        </Link>
       </div>
 
-      {/* मोबाइल कार्ड */}
-      <div className="divide-y divide-gray-50 lg:hidden">
+      <div className="divide-y divide-slate-100 lg:hidden">
         {aajKeBill.length === 0 ? (
-          <div className="px-5 py-8 text-center text-gray-400 text-sm">आज कोई बिल नहीं बना</div>
-        ) : (
-          aajKeBill.map((row) => (
-            <div key={row.bill.id} className="px-4 py-3 flex items-center justify-between">
-              <div>
-                <div className="text-xs font-bold text-blue-50">{row.bill.billNumber}</div>
-                <div className="text-sm font-semibold mt-0.5">{row.grahak?.naam ?? "—"}</div>
-              </div>
-              <div className="text-right">
-                <div className="text-sm font-bold text-green-700">₹{row.bill.kulRakam}</div>
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-full mt-1 inline-block ${chip[row.bill.sthiti] ?? "bg-gray-100 text-gray-600"}`}>
-                  {row.bill.sthiti}
-                </span>
-              </div>
+          <div className="py-8 text-center text-slate-400 text-sm">कोई बिल नहीं</div>
+        ) : aajKeBill.map((row) => (
+          <div key={row.bill.id} className="py-3 flex items-center justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <div className="text-[11px] font-bold text-blue-700">{row.bill.billNumber}</div>
+              <div className="text-sm font-semibold text-slate-900 truncate mt-0.5">{row.grahak?.naam ?? "—"}</div>
             </div>
-          ))
-        )}
+            <div className="text-right shrink-0">
+              <div className="text-sm font-extrabold text-green-700">₹{row.bill.kulRakam}</div>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full mt-1 inline-block border ${chip[row.bill.sthiti] ?? "bg-slate-50 text-slate-600 border-slate-200"}`}>
+                {row.bill.sthiti}
+              </span>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* डेस्कटॉप टेबल */}
       <table className="w-full hidden lg:table">
         <thead>
-          <tr className="bg-gray-50 text-xs text-gray-500 uppercase">
-            <th className="px-5 py-3 text-left">बिल नं.</th>
-            <th className="px-5 py-3 text-left">ग्राहक</th>
-            <th className="px-5 py-3 text-left">रकम</th>
-            <th className="px-5 py-3 text-left">GST</th>
-            <th className="px-5 py-3 text-left">स्थिति</th>
+          <tr className="text-xs text-slate-500 uppercase tracking-wide">
+            <th className="pb-2 text-left font-bold">बिल</th>
+            <th className="pb-2 text-left font-bold">ग्राहक</th>
+            <th className="pb-2 text-right font-bold">रकम</th>
+            <th className="pb-2 text-left font-bold">स्थिति</th>
           </tr>
         </thead>
         <tbody>
           {aajKeBill.length === 0 ? (
-            <tr>
-              <td colSpan={5} className="px-5 py-8 text-center text-gray-400 text-sm">
-                आज कोई बिल नहीं बना
+            <tr><td colSpan={4} className="py-8 text-center text-slate-400 text-sm">कोई बिल नहीं</td></tr>
+          ) : aajKeBill.map((row) => (
+            <tr key={row.bill.id} className="border-t border-slate-100">
+              <td className="py-2.5 text-xs font-bold text-blue-700">{row.bill.billNumber}</td>
+              <td className="py-2.5 text-sm font-semibold text-slate-900">{row.grahak?.naam ?? "—"}</td>
+              <td className="py-2.5 text-sm font-extrabold text-green-700 text-right">₹{row.bill.kulRakam}</td>
+              <td className="py-2.5">
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${chip[row.bill.sthiti] ?? "bg-slate-50 text-slate-600 border-slate-200"}`}>
+                  {row.bill.sthiti}
+                </span>
               </td>
             </tr>
-          ) : (
-            aajKeBill.map((row) => (
-              <tr key={row.bill.id} className="border-t border-gray-50 hover:bg-gray-50">
-                <td className="px-5 py-3 text-xs font-bold text-blue-50">{row.bill.billNumber}</td>
-                <td className="px-5 py-3 text-sm font-semibold">{row.grahak?.naam ?? "—"}</td>
-                <td className="px-5 py-3 text-sm font-bold text-green-700">₹{row.bill.kulRakam}</td>
-                <td className="px-5 py-3 text-xs text-orange-600 font-semibold">₹{row.bill.gstRakam ?? 0}</td>
-                <td className="px-5 py-3">
-                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${chip[row.bill.sthiti] ?? "bg-gray-100 text-gray-600"}`}>
-                    {row.bill.sthiti}
-                  </span>
-                </td>
-              </tr>
-            ))
-          )}
+          ))}
         </tbody>
       </table>
     </div>
-  )
+  );
 }

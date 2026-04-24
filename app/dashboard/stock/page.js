@@ -1,222 +1,290 @@
-﻿"use client"
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { masterCatalog } from "@/lib/catalog"
+﻿"use client";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { masterCatalog } from "@/lib/catalog";
+import { motion, AnimatePresence } from "framer-motion";
+import { Plus, X, Check, Pencil, Trash2, AlertTriangle, PackageX } from "lucide-react";
 
-const gstList = [0, 5, 12, 18, 28]
-const ikaaiList = ["नग", "मीटर", "किलो", "लीटर", "पैकेट", "बॉक्स", "रोल", "सेट", "जोड़ी", "बैग", "वर्ग फीट", "kg"]
+const gstList = [0, 5, 12, 18, 28];
+const ikaaiList = ["नग", "मीटर", "किलो", "लीटर", "पैकेट", "बॉक्स", "रोल", "सेट", "जोड़ी", "बैग", "वर्ग फीट", "kg"];
 
 export default function StockPage() {
-  const router = useRouter()
-  const [suchi, setSuchi] = useState([])
-  const [editItem, setEditItem] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [msg, setMsg] = useState("")
-  const [filter, setFilter] = useState("")
+  const router = useRouter();
+  const [suchi, setSuchi] = useState([]);
+  const [editItem, setEditItem] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState("");
+  const [filter, setFilter] = useState("");
 
-  const shreniList = ["सभी", ...masterCatalog.map(c => c.shreni)]
+  const shreniList = ["सभी", ...masterCatalog.map(c => c.shreni)];
 
   useEffect(() => {
-    fetch("/api/samaan").then(r => r.json()).then(data => setSuchi([...data].sort((a, b) => a.matra - b.matra)))
-  }, [])
+    fetch("/api/samaan").then(r => r.json()).then(data => setSuchi([...data].sort((a, b) => a.matra - b.matra)));
+  }, []);
 
-  const filtered = suchi.filter(s =>
-    (filter === "" || filter === "सभी" || s.shreni === filter)
-  )
+  const filtered = suchi.filter(s => (filter === "" || filter === "सभी" || s.shreni === filter));
+  const lowStockCount = suchi.filter(s => s.matra < 5).length;
 
   async function handleEdit(e) {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
     const res = await fetch("/api/samaan", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(editItem),
-    })
-    setLoading(false)
+    });
+    setLoading(false);
     if (res.ok) {
-      setMsg("✅ सामान अपडेट हुआ")
-      setEditItem(null)
-      const updated = await fetch("/api/samaan").then(r => r.json())
-      setSuchi([...updated].sort((a, b) => a.matra - b.matra))
+      setMsg("सामान अपडेट हुआ");
+      setEditItem(null);
+      const updated = await fetch("/api/samaan").then(r => r.json());
+      setSuchi([...updated].sort((a, b) => a.matra - b.matra));
+      setTimeout(() => setMsg(""), 3000);
     } else {
-      setMsg("❌ कुछ गड़बड़ हुई")
+      setMsg("कुछ गड़बड़ हुई");
     }
   }
 
   async function handleDelete(id) {
-    if (!confirm("क्या आप यह सामान हटाना चाहते हैं?")) return
+    if (!confirm("क्या आप यह सामान हटाना चाहते हैं?")) return;
     const res = await fetch("/api/samaan", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
-    })
-    if (res.ok) {
-      setSuchi(suchi.filter(s => s.id !== id))
-    }
+    });
+    if (res.ok) setSuchi(suchi.filter(s => s.id !== id));
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-extrabold text-gray-900">📦 स्टॉक</h1>
+    <div className="space-y-5">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-extrabold text-slate-900">स्टॉक</h1>
+          <p className="text-sm text-slate-500 mt-1">
+            {suchi.length} सामान
+            {lowStockCount > 0 && (
+              <span className="inline-flex items-center gap-1 ml-2 text-red-600 font-semibold">
+                <AlertTriangle className="w-3.5 h-3.5" />
+                {lowStockCount} कम स्टॉक
+              </span>
+            )}
+          </p>
+        </div>
         <button onClick={() => router.push("/dashboard/stock/add")}
-          className="bg-blue-700 text-white px-4 py-2.5 rounded-xl text-base font-bold">
-          ➕ नया सामान
+          className="flex items-center gap-1.5 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white px-4 py-2.5 rounded-xl font-bold text-sm shadow-lg active:scale-95 transition">
+          <Plus className="w-4 h-4" strokeWidth={3} />
+          नया सामान
         </button>
       </div>
 
-      {msg && (
-        <div className={`text-base px-4 py-3 rounded-xl font-medium ${msg.startsWith("✅") ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"}`}>
-          {msg}
-        </div>
-      )}
+      <AnimatePresence>
+        {msg && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="text-sm px-4 py-3 rounded-xl font-semibold bg-green-50 text-green-700 border border-green-200 flex items-center gap-2"
+          >
+            <Check className="w-4 h-4" strokeWidth={3} />
+            {msg}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="flex gap-2 flex-wrap">
-        {shreniList.map(s => (
-          <button key={s} onClick={() => setFilter(s === "सभी" ? "" : s)}
-            className={`px-3 py-2 rounded-full text-sm font-bold border transition-all ${
-              (filter === s || (s === "सभी" && filter === ""))
-                ? "bg-blue-700 text-white border-blue-700"
-                : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"
-            }`}>
-            {s}
-          </button>
-        ))}
+        {shreniList.map(s => {
+          const active = filter === s || (s === "सभी" && filter === "");
+          return (
+            <button key={s} onClick={() => setFilter(s === "सभी" ? "" : s)}
+              className={`px-3.5 py-1.5 rounded-full text-sm font-bold border transition ${
+                active
+                  ? "bg-blue-700 text-white border-blue-700 shadow-md"
+                  : "bg-white text-slate-600 border-slate-200 hover:border-blue-400"
+              }`}>
+              {s}
+            </button>
+          );
+        })}
       </div>
 
-      {editItem && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4">
-          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-lg">
-            <div className="flex justify-between items-center mb-4">
-              <div className="font-extrabold text-gray-900 text-lg">✏️ सामान बदलें</div>
-              <button onClick={() => setEditItem(null)} className="text-gray-500 text-2xl">×</button>
-            </div>
-            <form onSubmit={handleEdit} className="space-y-3">
-              <div>
-                <label className="text-sm text-gray-600 font-semibold mb-1 block">नाम</label>
-                <input className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500"
-                  value={editItem.naam} onChange={e => setEditItem({ ...editItem, naam: e.target.value })} />
+      <AnimatePresence>
+        {editItem && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center px-4"
+            onClick={(e) => e.target === e.currentTarget && setEditItem(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"
+            >
+              <div className="flex justify-between items-center mb-5">
+                <div className="flex items-center gap-2 font-extrabold text-slate-900 text-lg">
+                  <Pencil className="w-5 h-5 text-blue-700" />
+                  सामान बदलें
+                </div>
+                <button onClick={() => setEditItem(null)} className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <form onSubmit={handleEdit} className="space-y-3">
                 <div>
-                  <label className="text-sm text-gray-600 font-semibold mb-1 block">खरीद मूल्य ₹</label>
-                  <input type="number" className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500"
-                    value={editItem.kharidMulya} onChange={e => setEditItem({ ...editItem, kharidMulya: e.target.value })} />
+                  <label className="text-xs text-slate-600 font-bold mb-1 block uppercase tracking-wide">नाम</label>
+                  <input className="w-full border border-slate-200 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                    value={editItem.naam} onChange={e => setEditItem({ ...editItem, naam: e.target.value })} />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs text-slate-600 font-bold mb-1 block uppercase tracking-wide">खरीद ₹</label>
+                    <input type="number" className="w-full border border-slate-200 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                      value={editItem.kharidMulya} onChange={e => setEditItem({ ...editItem, kharidMulya: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="text-xs text-slate-600 font-bold mb-1 block uppercase tracking-wide">बिक्री ₹</label>
+                    <input type="number" className="w-full border border-slate-200 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                      value={editItem.bikriMulya} onChange={e => setEditItem({ ...editItem, bikriMulya: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="text-xs text-slate-600 font-bold mb-1 block uppercase tracking-wide">मात्रा</label>
+                    <input type="number" className="w-full border border-slate-200 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                      value={editItem.matra} onChange={e => setEditItem({ ...editItem, matra: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="text-xs text-slate-600 font-bold mb-1 block uppercase tracking-wide">इकाई</label>
+                    <select className="w-full border border-slate-200 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition bg-white"
+                      defaultValue={editItem.ikaai} onChange={e => setEditItem({ ...editItem, ikaai: e.target.value })}>
+                      {ikaaiList.map(i => <option key={i}>{i}</option>)}
+                    </select>
+                  </div>
+                  <div className="col-span-2">
+                    <label className="text-xs text-slate-600 font-bold mb-1 block uppercase tracking-wide">HSN कोड</label>
+                    <input className="w-full border border-slate-200 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+                      value={editItem.hsnCode ?? ""} onChange={e => setEditItem({ ...editItem, hsnCode: e.target.value })} />
+                  </div>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-600 font-semibold mb-1 block">बिक्री मूल्य ₹</label>
-                  <input type="number" className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500"
-                    value={editItem.bikriMulya} onChange={e => setEditItem({ ...editItem, bikriMulya: e.target.value })} />
+                  <label className="text-xs text-slate-600 font-bold mb-2 block uppercase tracking-wide">GST दर</label>
+                  <div className="flex gap-2 flex-wrap">
+                    {gstList.map(g => (
+                      <button type="button" key={g} onClick={() => setEditItem({ ...editItem, gstDar: g })}
+                        className={`px-4 py-2 rounded-xl text-sm font-bold border transition ${editItem.gstDar === g ? "bg-blue-700 text-white border-blue-700 shadow-sm" : "bg-white text-slate-600 border-slate-200 hover:border-blue-400"}`}>
+                        {g}%
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div>
-                  <label className="text-sm text-gray-600 font-semibold mb-1 block">मात्रा</label>
-                  <input type="number" className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500"
-                    value={editItem.matra} onChange={e => setEditItem({ ...editItem, matra: e.target.value })} />
-                </div>
-                <div>
-                  <label className="text-sm text-gray-600 font-semibold mb-1 block">इकाई</label>
-                  <select className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500"
-                    value={editItem.ikaai} onChange={e => setEditItem({ ...editItem, ikaai: e.target.value })}>
-                    {ikaaiList.map(i => <option key={i}>{i}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-sm text-gray-600 font-semibold mb-1 block">HSN कोड</label>
-                  <input className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500"
-                    value={editItem.hsnCode ?? ""} onChange={e => setEditItem({ ...editItem, hsnCode: e.target.value })} />
-                </div>
-              </div>
-              <div>
-                <label className="text-sm text-gray-600 font-semibold mb-2 block">GST दर</label>
-                <div className="flex gap-2">
-                  {gstList.map(g => (
-                    <button type="button" key={g} onClick={() => setEditItem({ ...editItem, gstDar: g })}
-                      className={`px-4 py-2 rounded-xl text-base font-bold border transition-all ${editItem.gstDar === g ? "bg-blue-700 text-white border-blue-700" : "bg-white text-gray-600 border-gray-300"}`}>
-                      {g}%
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <button type="submit" disabled={loading}
-                className="w-full bg-blue-700 text-white py-3 rounded-xl text-base font-bold disabled:opacity-50">
-                {loading ? "सेव हो रहा है..." : "✅ सेव करें"}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+                <button type="submit" disabled={loading}
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white py-3.5 rounded-xl text-base font-bold shadow-md disabled:opacity-50 active:scale-[0.98] transition">
+                  {loading ? "सेव हो रहा है..." : (<><Check className="w-5 h-5" strokeWidth={3} /> सेव करें</>)}
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="space-y-3 lg:hidden">
         {filtered.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 px-5 py-8 text-center text-gray-400 text-base">कोई सामान नहीं</div>
-        ) : filtered.map((s) => (
-          <div key={s.id} className="bg-white rounded-xl border border-gray-200 p-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <div className="font-extrabold text-gray-900 text-base">{s.naam}</div>
-                <div className="text-sm text-gray-500 mt-0.5">{s.shreni} · {s.ikaai}</div>
-                <div className="text-sm text-gray-400 mt-0.5">HSN: {s.hsnCode ?? "—"} · GST: {s.gstDar ?? 18}%</div>
-              </div>
-              <div className="text-right">
-                <div className={`text-2xl font-extrabold ${s.matra < 5 ? "text-red-600" : "text-green-700"}`}>{s.matra}</div>
-                <div className="text-sm text-gray-400">{s.ikaai} बचा</div>
-              </div>
+          <div className="bg-white rounded-2xl border border-slate-200 px-5 py-12 text-center">
+            <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-slate-100 flex items-center justify-center">
+              <PackageX className="w-8 h-8 text-slate-400" strokeWidth={1.8} />
             </div>
-            <div className="flex justify-between mt-2 pt-2 border-t border-gray-100 text-base">
-              <span className="text-gray-600">खरीद: <span className="font-bold text-gray-800">₹{s.kharidMulya}</span></span>
-              <span className="text-gray-600">बिक्री: <span className="font-bold text-gray-800">₹{s.bikriMulya}</span></span>
-            </div>
-            <div className="flex gap-2 mt-3">
-              <button onClick={() => setEditItem({ ...s })}
-                className="flex-1 text-sm font-bold border border-blue-300 text-blue-700 py-2 rounded-xl">
-                ✏️ बदलें
-              </button>
-              <button onClick={() => handleDelete(s.id)}
-                className="flex-1 text-sm font-bold border border-red-200 text-red-600 py-2 rounded-xl hover:bg-red-50">
-                🗑️ हटाएं
-              </button>
-            </div>
+            <div className="text-slate-500 font-semibold">कोई सामान नहीं</div>
           </div>
-        ))}
+        ) : filtered.map((s) => {
+          const low = s.matra < 5;
+          return (
+            <motion.div
+              key={s.id}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`bg-white rounded-2xl border p-4 shadow-sm ${low ? "border-red-200 ring-1 ring-red-100" : "border-slate-200"}`}
+            >
+              <div className="flex justify-between items-start gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="font-extrabold text-slate-900 text-base truncate">{s.naam}</div>
+                  <div className="text-xs text-slate-500 mt-0.5">{s.shreni} · {s.ikaai}</div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">HSN: {s.hsnCode ?? "—"} · GST: {s.gstDar ?? 18}%</div>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className={`text-3xl font-extrabold ${low ? "text-red-600" : "text-green-700"}`}>{s.matra}</div>
+                  <div className="text-[10px] text-slate-400">{s.ikaai}</div>
+                  {low && (
+                    <div className="inline-flex items-center gap-0.5 text-[10px] text-red-600 font-bold mt-0.5">
+                      <AlertTriangle className="w-3 h-3" />
+                      कम
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="flex justify-between mt-3 pt-3 border-t border-slate-100 text-sm">
+                <div>
+                  <span className="text-[11px] text-slate-500 block uppercase tracking-wide font-semibold">खरीद</span>
+                  <span className="font-bold text-slate-900">₹{s.kharidMulya}</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[11px] text-slate-500 block uppercase tracking-wide font-semibold">बिक्री</span>
+                  <span className="font-bold text-green-700">₹{s.bikriMulya}</span>
+                </div>
+              </div>
+              <div className="flex gap-2 mt-3">
+                <button onClick={() => setEditItem({ ...s })}
+                  className="flex-1 flex items-center justify-center gap-1.5 text-sm font-bold border-2 border-blue-200 text-blue-700 py-2 rounded-xl hover:bg-blue-50 transition">
+                  <Pencil className="w-3.5 h-3.5" />
+                  बदलें
+                </button>
+                <button onClick={() => handleDelete(s.id)}
+                  className="flex-1 flex items-center justify-center gap-1.5 text-sm font-bold border-2 border-red-200 text-red-600 py-2 rounded-xl hover:bg-red-50 transition">
+                  <Trash2 className="w-3.5 h-3.5" />
+                  हटाएं
+                </button>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
-      <div className="hidden lg:block bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="hidden lg:block bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-gray-900 text-white text-xs uppercase">
+          <thead className="bg-slate-900 text-white text-xs uppercase tracking-wide">
             <tr>
-              <th className="px-5 py-3 text-left">नाम</th>
-              <th className="px-5 py-3 text-left">श्रेणी</th>
-              <th className="px-5 py-3 text-left">इकाई</th>
-              <th className="px-5 py-3 text-left">HSN</th>
-              <th className="px-5 py-3 text-right">GST%</th>
-              <th className="px-5 py-3 text-right">खरीद</th>
-              <th className="px-5 py-3 text-right">बिक्री</th>
-              <th className="px-5 py-3 text-right">मात्रा</th>
-              <th className="px-5 py-3 text-center">कार्य</th>
+              <th className="px-5 py-3 text-left font-bold">नाम</th>
+              <th className="px-5 py-3 text-left font-bold">श्रेणी</th>
+              <th className="px-5 py-3 text-left font-bold">इकाई</th>
+              <th className="px-5 py-3 text-left font-bold">HSN</th>
+              <th className="px-5 py-3 text-right font-bold">GST%</th>
+              <th className="px-5 py-3 text-right font-bold">खरीद</th>
+              <th className="px-5 py-3 text-right font-bold">बिक्री</th>
+              <th className="px-5 py-3 text-right font-bold">मात्रा</th>
+              <th className="px-5 py-3 text-center font-bold">कार्य</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
-              <tr><td colSpan={9} className="px-5 py-8 text-center text-gray-400">कोई सामान नहीं</td></tr>
+              <tr><td colSpan={9} className="px-5 py-12 text-center text-slate-400">कोई सामान नहीं</td></tr>
             ) : filtered.map((s) => (
-              <tr key={s.id} className="border-t border-gray-100 hover:bg-gray-50">
-                <td className="px-5 py-3 font-semibold text-gray-800">{s.naam}</td>
-                <td className="px-5 py-3 text-gray-500">{s.shreni}</td>
-                <td className="px-5 py-3 text-gray-500">{s.ikaai}</td>
-                <td className="px-5 py-3 text-gray-400">{s.hsnCode ?? "—"}</td>
-                <td className="px-5 py-3 text-right text-gray-600">{s.gstDar ?? 18}%</td>
-                <td className="px-5 py-3 text-right text-gray-700">₹{s.kharidMulya}</td>
-                <td className="px-5 py-3 text-right text-gray-700">₹{s.bikriMulya}</td>
+              <tr key={s.id} className={`border-t border-slate-100 hover:bg-slate-50 transition ${s.matra < 5 ? "bg-red-50/40" : ""}`}>
+                <td className="px-5 py-3 font-semibold text-slate-900">{s.naam}</td>
+                <td className="px-5 py-3 text-slate-500">{s.shreni}</td>
+                <td className="px-5 py-3 text-slate-500">{s.ikaai}</td>
+                <td className="px-5 py-3 text-slate-400">{s.hsnCode ?? "—"}</td>
+                <td className="px-5 py-3 text-right text-slate-600">{s.gstDar ?? 18}%</td>
+                <td className="px-5 py-3 text-right text-slate-700">₹{s.kharidMulya}</td>
+                <td className="px-5 py-3 text-right font-semibold text-green-700">₹{s.bikriMulya}</td>
                 <td className={`px-5 py-3 text-right font-extrabold text-lg ${s.matra < 5 ? "text-red-600" : "text-green-700"}`}>{s.matra}</td>
                 <td className="px-5 py-3 text-center">
                   <div className="flex gap-2 justify-center">
                     <button onClick={() => setEditItem({ ...s })}
-                      className="text-sm text-blue-700 border border-blue-300 px-3 py-1.5 rounded-lg font-semibold">
-                      ✏️ बदलें
+                      className="w-8 h-8 flex items-center justify-center text-blue-700 border-2 border-blue-200 rounded-lg hover:bg-blue-50 transition">
+                      <Pencil className="w-3.5 h-3.5" />
                     </button>
                     <button onClick={() => handleDelete(s.id)}
-                      className="text-sm text-red-600 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-50 font-semibold">
-                      🗑️ हटाएं
+                      className="w-8 h-8 flex items-center justify-center text-red-600 border-2 border-red-200 rounded-lg hover:bg-red-50 transition">
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </td>
@@ -226,5 +294,5 @@ export default function StockPage() {
         </table>
       </div>
     </div>
-  )
+  );
 }
