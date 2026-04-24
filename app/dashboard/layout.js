@@ -18,13 +18,22 @@ export default function DashboardLayout({ children }) {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-blue-700 text-white px-4 py-3 flex items-center justify-between sticky top-0 z-10">
         <div className="font-bold text-lg">🏪 दुकान</div>
-        <Link
-          href="/dashboard/settings"
-          className="text-blue-200 text-lg flex items-center gap-1"
-        >
-          <span className="text-2xl">⚙️</span>
-          <span className="text-sm font-bold">सेटिंग्स</span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/dashboard/settings"
+            className="text-blue-200 text-lg flex items-center gap-1"
+          >
+            <span className="text-2xl">⚙️</span>
+            <span className="text-sm font-bold">सेटिंग्स</span>
+          </Link>
+          <a
+            href="/api/auth/logout"
+            className="text-blue-200 text-lg flex items-center gap-1"
+          >
+            <span className="text-2xl">🚪</span>
+            <span className="text-sm font-bold">लॉगआउट</span>
+          </a>
+        </div>
       </header>
 
       <nav className="hidden lg:flex bg-white border-b border-gray-200 px-4 gap-1">
