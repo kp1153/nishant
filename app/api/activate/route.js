@@ -1,29 +1,60 @@
 import { db } from "@/db";
 import { nishantUsers } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
+import { createClient } from "@libsql/client";
+
+const turso = createClient({
+  url: process.env.TURSO_DATABASE_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN,
+});
 
 export async function POST(request) {
-  const { email, secret } = await request.json();
+  try {
+    const authHeader = request.headers.get("authorization");
+    const body = await request.json();
+    const { email, name, secret } = body;
 
-  if (secret !== process.env.HUB_SECRET) {
-    return Response.json({ error: "unauthorized" }, { status: 401 });
+    const secretValid =
+      authHeader === `Bearer ${process.env.HUB_SECRET}` ||
+      secret === process.env.HUB_SECRET;
+
+    if (!secretValid) {
+      return Response.json({ success: false, error: "unauthorized" }, { status: 401 });
+    }
+    if (!email) {
+      return Response.json({ success: false, error: "email required" }, { status: 400 });
+    }
+
+    const expiry = new Date();
+    expiry.setFullYear(expiry.getFullYear() + 1);
+    const expiryISO = expiry.toISOString();
+
+    const existing = await db
+      .select()
+      .from(nishantUsers)
+      .where(eq(nishantUsers.email, email));
+
+    if (existing.length === 0) {
+      await turso.execute({
+        sql: "INSERT OR IGNORE INTO pre_activations (email) VALUES (?)",
+        args: [email],
+      });
+      return Response.json({ success: true, message: "pre-activated" });
+    }
+
+    await db
+      .update(nishantUsers)
+      .set({
+        status: "active",
+        active: 1,
+        expiryDate: expiryISO,
+        reminderSent: 0,
+      })
+      .where(eq(nishantUsers.email, email));
+
+    return Response.json({ success: true, message: "activated" });
+  } catch (err) {
+    console.error("[activate]", err);
+    return Response.json({ success: false, error: "server error" }, { status: 500 });
   }
-
-  if (!email) return Response.json({ error: "email required" }, { status: 400 });
-
-  const existing = await db
-    .select()
-    .from(nishantUsers)
-    .where(eq(nishantUsers.email, email));
-
-  if (existing.length === 0) {
-    return Response.json({ error: "user not found" }, { status: 404 });
-  }
-
-  await db
-    .update(nishantUsers)
-    .set({ active: 1 })
-    .where(eq(nishantUsers.email, email));
-
-  return Response.json({ ok: true, email });
 }
