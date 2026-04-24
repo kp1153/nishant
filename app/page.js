@@ -165,7 +165,7 @@ export default function Home() {
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-blue-600 text-white rounded-2xl p-8 text-center">
             <p className="text-sm font-semibold mb-1 opacity-80">पहली बार</p>
-            <p className="text-5xl font-bold mb-1">₹5,500</p>
+            <p className="text-5xl font-bold mb-1">₹4,900</p>
             <p className="text-sm opacity-70 mb-6">एक बार — 1 साल शामिल</p>
             <ul className="text-sm space-y-2 mb-8 text-left">
               <li>✅ Windows + Android दोनों</li>
