@@ -1,7 +1,4 @@
-﻿"use client";
-import { motion } from "framer-motion";
-
-const styles = {
+﻿const styles = {
   up: {
     iconBg: "bg-gradient-to-br from-green-500 to-emerald-600",
     badge: "bg-green-50 text-green-700 border-green-200",
@@ -22,20 +19,27 @@ const styles = {
 export default function StatCard({ Icon, label, value, trend, type }) {
   const s = styles[type] || styles.up;
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -2 }}
-      className={`bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:ring-4 ${s.ring} p-4 transition-all`}
+    <div
+      className={`bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:ring-4 hover:-translate-y-0.5 ${s.ring} p-4 transition-all duration-200`}
     >
       <div className="flex items-center justify-between mb-3">
-        <div className={`w-10 h-10 rounded-xl ${s.iconBg} flex items-center justify-center shadow-sm`}>
+        <div
+          className={`w-10 h-10 rounded-xl ${s.iconBg} flex items-center justify-center shadow-sm`}
+        >
           <Icon className="w-5 h-5 text-white" strokeWidth={2.5} />
         </div>
-        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${s.badge}`}>{trend}</span>
+        <span
+          className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${s.badge}`}
+        >
+          {trend}
+        </span>
       </div>
-      <div className="text-xl sm:text-2xl font-extrabold text-slate-900 truncate">{value}</div>
-      <div className="text-xs text-slate-500 mt-1 font-medium truncate">{label}</div>
-    </motion.div>
+      <div className="text-xl sm:text-2xl font-extrabold text-slate-900 truncate">
+        {value}
+      </div>
+      <div className="text-xs text-slate-500 mt-1 font-medium truncate">
+        {label}
+      </div>
+    </div>
   );
 }
