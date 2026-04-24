@@ -3,10 +3,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { masterCatalog } from "@/lib/catalog";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, X, Check, Pencil, Trash2, AlertTriangle, PackageX } from "lucide-react";
+import { Plus, X, Check, Pencil, Trash2, AlertTriangle, PackageX, Search, Upload } from "lucide-react";
 
 const gstList = [0, 5, 12, 18, 28];
 const ikaaiList = ["नग", "मीटर", "किलो", "लीटर", "पैकेट", "बॉक्स", "रोल", "सेट", "जोड़ी", "बैग", "वर्ग फीट", "kg"];
+
+const input = "w-full border border-slate-200 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition";
 
 export default function StockPage() {
   const router = useRouter();
@@ -15,6 +17,7 @@ export default function StockPage() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
   const [filter, setFilter] = useState("");
+  const [search, setSearch] = useState("");
 
   const shreniList = ["सभी", ...masterCatalog.map(c => c.shreni)];
 
@@ -22,7 +25,11 @@ export default function StockPage() {
     fetch("/api/samaan").then(r => r.json()).then(data => setSuchi([...data].sort((a, b) => a.matra - b.matra)));
   }, []);
 
-  const filtered = suchi.filter(s => (filter === "" || filter === "सभी" || s.shreni === filter));
+  const filtered = suchi.filter(s => {
+    const matchFilter = filter === "" || filter === "सभी" || s.shreni === filter;
+    const matchSearch = !search || s.naam?.toLowerCase().includes(search.toLowerCase());
+    return matchFilter && matchSearch;
+  });
   const lowStockCount = suchi.filter(s => s.matra < 5).length;
 
   async function handleEdit(e) {
@@ -45,8 +52,8 @@ export default function StockPage() {
     }
   }
 
-  async function handleDelete(id) {
-    if (!confirm("क्या आप यह सामान हटाना चाहते हैं?")) return;
+  async function handleDelete(id, naam) {
+    if (!confirm(`${naam} को हटाना चाहते हैं?`)) return;
     const res = await fetch("/api/samaan", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -79,17 +86,19 @@ export default function StockPage() {
 
       <AnimatePresence>
         {msg && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="text-sm px-4 py-3 rounded-xl font-semibold bg-green-50 text-green-700 border border-green-200 flex items-center gap-2"
-          >
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            className="text-sm px-4 py-3 rounded-xl font-semibold bg-green-50 text-green-700 border border-green-200 flex items-center gap-2">
             <Check className="w-4 h-4" strokeWidth={3} />
             {msg}
           </motion.div>
         )}
       </AnimatePresence>
+
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <input className={input + " pl-10"} placeholder="सामान का नाम खोजें..."
+          value={search} onChange={e => setSearch(e.target.value)} />
+      </div>
 
       <div className="flex gap-2 flex-wrap">
         {shreniList.map(s => {
@@ -97,9 +106,7 @@ export default function StockPage() {
           return (
             <button key={s} onClick={() => setFilter(s === "सभी" ? "" : s)}
               className={`px-3.5 py-1.5 rounded-full text-sm font-bold border transition ${
-                active
-                  ? "bg-blue-700 text-white border-blue-700 shadow-md"
-                  : "bg-white text-slate-600 border-slate-200 hover:border-blue-400"
+                active ? "bg-blue-700 text-white border-blue-700 shadow-sm" : "bg-white text-slate-600 border-slate-200 hover:border-blue-400"
               }`}>
               {s}
             </button>
@@ -109,19 +116,11 @@ export default function StockPage() {
 
       <AnimatePresence>
         {editItem && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center px-4"
-            onClick={(e) => e.target === e.currentTarget && setEditItem(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"
-            >
+            onClick={(e) => e.target === e.currentTarget && setEditItem(null)}>
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-5">
                 <div className="flex items-center gap-2 font-extrabold text-slate-900 text-lg">
                   <Pencil className="w-5 h-5 text-blue-700" />
@@ -134,36 +133,31 @@ export default function StockPage() {
               <form onSubmit={handleEdit} className="space-y-3">
                 <div>
                   <label className="text-xs text-slate-600 font-bold mb-1 block uppercase tracking-wide">नाम</label>
-                  <input className="w-full border border-slate-200 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
-                    value={editItem.naam} onChange={e => setEditItem({ ...editItem, naam: e.target.value })} />
+                  <input className={input} value={editItem.naam} onChange={e => setEditItem({ ...editItem, naam: e.target.value })} />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs text-slate-600 font-bold mb-1 block uppercase tracking-wide">खरीद ₹</label>
-                    <input type="number" className="w-full border border-slate-200 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
-                      value={editItem.kharidMulya} onChange={e => setEditItem({ ...editItem, kharidMulya: e.target.value })} />
+                    <input type="number" className={input} value={editItem.kharidMulya} onChange={e => setEditItem({ ...editItem, kharidMulya: e.target.value })} />
                   </div>
                   <div>
                     <label className="text-xs text-slate-600 font-bold mb-1 block uppercase tracking-wide">बिक्री ₹</label>
-                    <input type="number" className="w-full border border-slate-200 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
-                      value={editItem.bikriMulya} onChange={e => setEditItem({ ...editItem, bikriMulya: e.target.value })} />
+                    <input type="number" className={input} value={editItem.bikriMulya} onChange={e => setEditItem({ ...editItem, bikriMulya: e.target.value })} />
                   </div>
                   <div>
                     <label className="text-xs text-slate-600 font-bold mb-1 block uppercase tracking-wide">मात्रा</label>
-                    <input type="number" className="w-full border border-slate-200 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
-                      value={editItem.matra} onChange={e => setEditItem({ ...editItem, matra: e.target.value })} />
+                    <input type="number" className={input} value={editItem.matra} onChange={e => setEditItem({ ...editItem, matra: e.target.value })} />
                   </div>
                   <div>
                     <label className="text-xs text-slate-600 font-bold mb-1 block uppercase tracking-wide">इकाई</label>
-                    <select className="w-full border border-slate-200 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition bg-white"
-                      defaultValue={editItem.ikaai} onChange={e => setEditItem({ ...editItem, ikaai: e.target.value })}>
+                    <select className={input + " bg-white"} defaultValue={editItem.ikaai}
+                      onChange={e => setEditItem({ ...editItem, ikaai: e.target.value })}>
                       {ikaaiList.map(i => <option key={i}>{i}</option>)}
                     </select>
                   </div>
                   <div className="col-span-2">
                     <label className="text-xs text-slate-600 font-bold mb-1 block uppercase tracking-wide">HSN कोड</label>
-                    <input className="w-full border border-slate-200 rounded-xl px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
-                      value={editItem.hsnCode ?? ""} onChange={e => setEditItem({ ...editItem, hsnCode: e.target.value })} />
+                    <input className={input} value={editItem.hsnCode ?? ""} onChange={e => setEditItem({ ...editItem, hsnCode: e.target.value })} />
                   </div>
                 </div>
                 <div>
@@ -171,7 +165,7 @@ export default function StockPage() {
                   <div className="flex gap-2 flex-wrap">
                     {gstList.map(g => (
                       <button type="button" key={g} onClick={() => setEditItem({ ...editItem, gstDar: g })}
-                        className={`px-4 py-2 rounded-xl text-sm font-bold border transition ${editItem.gstDar === g ? "bg-blue-700 text-white border-blue-700 shadow-sm" : "bg-white text-slate-600 border-slate-200 hover:border-blue-400"}`}>
+                        className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition ${editItem.gstDar === g ? "bg-blue-700 text-white border-blue-700 shadow-sm" : "bg-white text-slate-600 border-slate-200 hover:border-blue-400"}`}>
                         {g}%
                       </button>
                     ))}
@@ -193,17 +187,13 @@ export default function StockPage() {
             <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-slate-100 flex items-center justify-center">
               <PackageX className="w-8 h-8 text-slate-400" strokeWidth={1.8} />
             </div>
-            <div className="text-slate-500 font-semibold">कोई सामान नहीं</div>
+            <div className="text-slate-500 font-semibold">{search || filter ? "कोई सामान नहीं मिला" : "कोई सामान नहीं"}</div>
           </div>
         ) : filtered.map((s) => {
           const low = s.matra < 5;
           return (
-            <motion.div
-              key={s.id}
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={`bg-white rounded-2xl border p-4 shadow-sm ${low ? "border-red-200 ring-1 ring-red-100" : "border-slate-200"}`}
-            >
+            <motion.div key={s.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}
+              className={`bg-white rounded-2xl border p-4 shadow-sm ${low ? "border-red-200 ring-1 ring-red-100" : "border-slate-200"}`}>
               <div className="flex justify-between items-start gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="font-extrabold text-slate-900 text-base truncate">{s.naam}</div>
@@ -237,7 +227,7 @@ export default function StockPage() {
                   <Pencil className="w-3.5 h-3.5" />
                   बदलें
                 </button>
-                <button onClick={() => handleDelete(s.id)}
+                <button onClick={() => handleDelete(s.id, s.naam)}
                   className="flex-1 flex items-center justify-center gap-1.5 text-sm font-bold border-2 border-red-200 text-red-600 py-2 rounded-xl hover:bg-red-50 transition">
                   <Trash2 className="w-3.5 h-3.5" />
                   हटाएं
@@ -265,7 +255,7 @@ export default function StockPage() {
           </thead>
           <tbody>
             {filtered.length === 0 ? (
-              <tr><td colSpan={9} className="px-5 py-12 text-center text-slate-400">कोई सामान नहीं</td></tr>
+              <tr><td colSpan={9} className="px-5 py-12 text-center text-slate-400">{search || filter ? "कोई मिला नहीं" : "कोई सामान नहीं"}</td></tr>
             ) : filtered.map((s) => (
               <tr key={s.id} className={`border-t border-slate-100 hover:bg-slate-50 transition ${s.matra < 5 ? "bg-red-50/40" : ""}`}>
                 <td className="px-5 py-3 font-semibold text-slate-900">{s.naam}</td>
@@ -282,7 +272,7 @@ export default function StockPage() {
                       className="w-8 h-8 flex items-center justify-center text-blue-700 border-2 border-blue-200 rounded-lg hover:bg-blue-50 transition">
                       <Pencil className="w-3.5 h-3.5" />
                     </button>
-                    <button onClick={() => handleDelete(s.id)}
+                    <button onClick={() => handleDelete(s.id, s.naam)}
                       className="w-8 h-8 flex items-center justify-center text-red-600 border-2 border-red-200 rounded-lg hover:bg-red-50 transition">
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
