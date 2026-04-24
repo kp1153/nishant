@@ -1,18 +1,12 @@
-import { db } from "@/db";
+import { db, client } from "@/db";
 import { nishantUsers } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
-import { createClient } from "@libsql/client";
-
-const turso = createClient({
-  url: process.env.TURSO_DATABASE_URL,
-  authToken: process.env.TURSO_AUTH_TOKEN,
-});
+import { eq } from "drizzle-orm";
 
 export async function POST(request) {
   try {
     const authHeader = request.headers.get("authorization");
     const body = await request.json();
-    const { email, name, secret } = body;
+    const { email, secret } = body;
 
     const secretValid =
       authHeader === `Bearer ${process.env.HUB_SECRET}` ||
@@ -35,7 +29,7 @@ export async function POST(request) {
       .where(eq(nishantUsers.email, email));
 
     if (existing.length === 0) {
-      await turso.execute({
+      await client.execute({
         sql: "INSERT OR IGNORE INTO pre_activations (email) VALUES (?)",
         args: [email],
       });

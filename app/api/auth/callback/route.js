@@ -1,16 +1,10 @@
 import { google } from "@/lib/google.js";
-import { db } from "@/db";
+import { db, client } from "@/db";
 import { nishantUsers } from "@/db/schema";
 import { createSession } from "@/lib/session.js";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { createClient } from "@libsql/client";
-
-const turso = createClient({
-  url: process.env.TURSO_DATABASE_URL,
-  authToken: process.env.TURSO_AUTH_TOKEN,
-});
 
 function redirectWithCookie(request, path, token) {
   const response = NextResponse.redirect(new URL(path, request.url));
@@ -64,7 +58,7 @@ export async function GET(request) {
         reminderSent: 0,
       });
 
-      const preAct = await turso.execute({
+      const preAct = await client.execute({
         sql: "SELECT email FROM pre_activations WHERE email = ?",
         args: [user.email],
       });
@@ -83,7 +77,7 @@ export async function GET(request) {
           })
           .where(eq(nishantUsers.email, user.email));
 
-        await turso.execute({
+        await client.execute({
           sql: "DELETE FROM pre_activations WHERE email = ?",
           args: [user.email],
         });
