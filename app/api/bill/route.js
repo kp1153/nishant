@@ -1,11 +1,21 @@
 ﻿import { db } from "@/db";
-import { bill, billItem, udhaari, samaan } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
+import { bill, billItem, grahak, udhaari, samaan } from "@/db/schema";
+import { eq, sql, desc } from "drizzle-orm";
 import { NextResponse } from "next/server";
+
+export async function GET() {
+  const all = await db
+    .select()
+    .from(bill)
+    .leftJoin(grahak, eq(bill.grahakId, grahak.id))
+    .orderBy(desc(bill.banaya));
+  return NextResponse.json(all);
+}
 
 export async function POST(req) {
   const {
     grahakId,
+    grahakNaam,
     items,
     bhugtan,
     kul,
@@ -38,7 +48,7 @@ export async function POST(req) {
   for (const item of items) {
     await db.insert(billItem).values({
       billId: newBill.id,
-      samaanId: item.id ?? null,
+      samaanId: item.id && !String(item.id).startsWith("catalog-") && !String(item.id).startsWith("manual-") ? item.id : null,
       matra: item.matra,
       mulya: item.mulya,
       gstDar: item.gstDar ?? 18,
@@ -59,21 +69,12 @@ export async function POST(req) {
     }
   }
 
-  if (bhugtan === "उधार") {
+  if ((bhugtan === "उधार" || bhugtan === "आंशिक") && grahakId) {
     await db.insert(udhaari).values({
       grahakId: grahakId,
       billId: newBill.id,
       rakam: kul,
-      chukaya: 0,
-    });
-  }
-
-  if (bhugtan === "आंशिक") {
-    await db.insert(udhaari).values({
-      grahakId: grahakId,
-      billId: newBill.id,
-      rakam: kul,
-      chukaya: parseFloat(aansikRakam) || 0,
+      chukaya: bhugtan === "आंशिक" ? (parseFloat(aansikRakam) || 0) : 0,
     });
   }
 
